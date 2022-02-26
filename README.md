@@ -10,6 +10,7 @@ Evan Ng - 1004166662
 
 Eric Tan - 1044277007
 
+Parth Solanki - 1005244415
 
 
 ## Key Features
