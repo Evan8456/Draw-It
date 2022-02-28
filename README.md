@@ -26,9 +26,8 @@ Parth Solanki - 1005244415
 
 ## Additional Features
 - Synchronous drawing: Allow users to callaborate. Be able to share pieces so users may choose to work on it together or alone (similar to google docs).
-- Show Redraw 
+- Allow support for Drafts
 - Search art (Title, Tags, Etc.): Search your gallery through key words
-- Follow: be able to follow users and have a news feed on changes they may have made
 
 ## Tech Stack
 - NodeJS
