@@ -31,6 +31,15 @@ export function Draw() {
     context.strokeStyle = color;
   };
 
+  function downloadCanvas(){
+    const canvas = canvasRef.current;
+    const url = canvas.toDataURL("image/png");
+    const link = document.createElement("a");
+    link.download = "chart.png";
+    link.href = url;
+    link.click();
+
+  }
  
 
   const setThickness = (thickness) => {
@@ -90,6 +99,7 @@ export function Draw() {
       </div>
 
       <div>
+		<button onClick={() => downloadCanvas()}>Export to PNG</button>
         <input
           onChange={() => changeColor(colorRef.current.value)}
           ref={colorRef}
