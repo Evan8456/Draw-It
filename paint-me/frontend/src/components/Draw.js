@@ -35,7 +35,7 @@ export function Draw() {
     const canvas = canvasRef.current;
     const url = canvas.toDataURL("image/png");
     const link = document.createElement("a");
-    link.download = "chart.png";
+    link.download = "art.png";
     link.href = url;
     link.click();
 
