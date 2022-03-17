@@ -1,11 +1,41 @@
-import React from "react";
-import {Draw} from "./components/Draw";
+import React, { useEffect, useState } from "react";
+import { Route, BrowserRouter, Navigate, Routes} from 'react-router-dom';
 import "./App.css";
+import Dashboard from "./components/Dashboard/Dashboard";
+import { Draw } from "./components/Draw/Draw";
+import  Login  from "./components/Login/Login";
+import api from "./api";
+
+const ProtectedRoute = ({ auth, children }) => {
+  if (!auth) {
+    return <Navigate to="/" replace />;
+  }
+
+  return children;
+};
+
 function App() {
+  const [auth, setAuth] = useState(true);
+
+  useEffect(() => {
+  });
+
   return (
-    <div className="App">
-     <Draw/>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Login/>}/>
+        <Route path="/draw" element={
+          <ProtectedRoute auth={auth}>
+            <Draw/>
+          </ProtectedRoute>
+        }/>
+        <Route path="/dashboard" element={
+          <ProtectedRoute auth={auth}>
+            <Dashboard/>
+          </ProtectedRoute>
+        }/>
+      </Routes>
+    </BrowserRouter>
   );
 }
 
