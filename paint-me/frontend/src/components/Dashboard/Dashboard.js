@@ -1,12 +1,23 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Navbar from "../Navbar/Navbar";
 import { Container, Heading, Flex, Box, Text } from "@chakra-ui/react";
 import Fonts from "../../themes/fonts";
 import './Dashboard.css'
 import Carousel from "../Carousel/Carousel";
 import { connect } from "react-redux";
+import api from '../../api'
+import { useNavigate } from 'react-router-dom';
 
 function Dashboard(props) {
+    let navigate = useNavigate();
+
+    useEffect(() => {
+        api.authenticate((res) => {
+            console.log("Logged in");
+        }, (err) => {
+            navigate("/")
+        })
+    });
 
     return (
         <div className="temp">

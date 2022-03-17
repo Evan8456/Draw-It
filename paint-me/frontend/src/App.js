@@ -4,6 +4,7 @@ import "./App.css";
 import Dashboard from "./components/Dashboard/Dashboard";
 import { Draw } from "./components/Draw/Draw";
 import  Login  from "./components/Login/Login";
+import api from "./api";
 
 const ProtectedRoute = ({ auth, children }) => {
   if (!auth) {
@@ -17,7 +18,6 @@ function App() {
   const [auth, setAuth] = useState(true);
 
   useEffect(() => {
-    console.log("check authentication here");
   });
 
   return (

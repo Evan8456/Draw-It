@@ -1,5 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import "./Draw.css";
+import { useNavigate } from 'react-router-dom';
+import api from "../../api"
+
 export function Draw() {
   const canvasRef = useRef();
   const contextRef = useRef();
@@ -9,6 +12,15 @@ export function Draw() {
   const [startX, setStartX] = useState(null);
   const [startY, setStartY] = useState(null);
 
+  let navigate = useNavigate();
+
+  useEffect(() => {
+      api.authenticate((res) => {
+          console.log("Logged in");
+      }, (err) => {
+          navigate("/")
+      })
+  });
 
   useEffect(() => {
     const canvas = canvasRef.current;

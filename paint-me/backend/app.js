@@ -41,25 +41,45 @@ app.use(bodyParser.json());
 const cookie = require('cookie');
 const session = require('express-session');
 
- app.use(session({
-   secret: 'This is the final project',
-   resave: false,
-   saveUninitialized: true,
-   cookie: {
-	   httpOnly: true,
-	   secure: true,
-	   samesite : 'strict'
- }))
+//DEV ONLY
+if(process.env.ENVIRONMENT == "dev") {
+  app.use(session({
+    secret: 'This is the final project',
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      httpOnly: true,
+      secure: false,
+      samesite : 'strict'
+     }
+   }));
 
+  const cors = require('cors')
+  app.use(cors({
+    origin:'http://localhost:3000',
+    credentials: true
+  }));
+} else {
+  app.use(session({
+    secret: 'This is the final project',
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      httpOnly: true,
+      secure: true,
+      samesite : 'strict'
+     }
+   }));
+}
  
 var isAuthenticated = function(req, res, next) {
-  if (!req.username) return res.status(401).end("access denied");
+  if (!req.session.username) return res.status(401).end("access denied");
   next();
 };
 
  app.use(function (req, res, next){
    var cookies = cookie.parse(req.headers.cookie || '');
-   console.log(req.session.user);
+   console.log(req.session.username);
    req.username =(req.session.user)? req.session.user.username : ''
    console.log("HTTP request", req.username, req.method, req.url, req.body);
    next();
@@ -73,10 +93,8 @@ var isAuthenticated = function(req, res, next) {
     res.setHeader('Set-Cookie', cookie.serialize('username', '', {
           path : '/', 
           maxAge: 60 * 60 * 24 * 7,		  // 1 week in number of seconds
-		  httpOnly: true,
-		  secure: true,
-		  samesite : 'strict'
-	}));
+	  }));
+    console.log(req.session)
     return res.json({});
     
 });
@@ -84,10 +102,8 @@ var isAuthenticated = function(req, res, next) {
 
 
 app.post('/signUp/',  function (req, res, next) {
- console.log(req.body);
   var username = req.body.username;
   var password = req.body.password;
-  console.log(username);
   bcrypt.hash(password, saltRounds, function(err, hash) {
     // Store the salted hash in the database
     if (err) return res.status(500).end(err);
@@ -99,13 +115,10 @@ app.post('/signUp/',  function (req, res, next) {
                 if (err) return res.status(500).end(err);
                 // initialize cookie
                 // gets the update entry returned from callback
-                req.session.user = username;
+                req.session.username = username;
                 res.setHeader('Set-Cookie', cookie.serialize('username', username, {
                       path : '/', 
-                      maxAge: 60 * 60 * 24 * 7,
-					  httpOnly: true,
-					  secure: true,
-					  samesite : 'strict'
+                      maxAge: 60 * 60 * 24 * 7
                 }));
                 return res.json(username);
             });
@@ -114,11 +127,10 @@ app.post('/signUp/',  function (req, res, next) {
     });
 });
 
-app.post('/login/',  function (req, res, next) {
+app.post('/signin/',  function (req, res, next) {
    
   var username = req.body.username;
     var password = req.body.password;
-    console.log(password);
     // retrieve user from the database
     userModel.findOne({username: username}, function(err, user){
         if (err) return res.status(500).end(err);
@@ -129,17 +141,25 @@ app.post('/login/',  function (req, res, next) {
                 return res.status(401).end("access denied"); 
             }
             // initialize cookie
-            req.session.user = user;
+            req.session.username = username;
             res.setHeader('Set-Cookie', cookie.serialize('username', username, {
                 path : '/', 
                 maxAge: 60 * 60 * 24 * 7
             }));
-            console.log()
-            return res.json(username);
+            return res.json({username});
         });
 
         
     });
+});
+
+app.get('/authenticate/', function(req, res, next){
+  console.log(req.session)
+  if(req.session.username) {
+    return res.status(200).send({status:"success"});
+  } else {
+    return res.status(401).send({status:"failure"});
+  }
 });
 
 

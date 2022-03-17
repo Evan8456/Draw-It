@@ -1,14 +1,23 @@
 import { Container, Flex, Heading, AspectRatio, Image, Box, Stack, FormControl, InputGroup, InputLeftElement, Input, InputRightElement, Button, FormHelperText, Link, chakra, Spacer, propNames} from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import NavBar from "../Navbar/Navbar";
 import pencil from "../../assets/pencil.png"
 import {FaUserAlt, FaLock} from 'react-icons/fa';
 import { LoginCard } from "./LoginCard";
 import { connect } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import api from "../../api"
 
 function Login(props) {
+    let navigate = useNavigate();
 
-    console.log(props.cardType)
+    useEffect(() => {
+        api.authenticate((res) => {
+            navigate("/dashboard")
+        }, (err) => {
+            
+        })
+    });
 
     return (
         <div className="temp">

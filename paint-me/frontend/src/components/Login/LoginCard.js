@@ -1,6 +1,8 @@
 import {  Text, Stack, FormControl, InputGroup, InputLeftElement, Input, InputRightElement, Button, FormHelperText, Link, chakra} from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import {FaUserAlt, FaLock, FaEnvelope} from 'react-icons/fa';
+import api from "../../api"
+import { useNavigate } from "react-router-dom";
 
 const CFaLock = chakra(FaLock);
 const CFaUserAlt = chakra(FaUserAlt);
@@ -13,6 +15,7 @@ export function LoginCard(props) {
     const [repPassword, setRepPassword] = useState("");
     const [username, setUsername] = useState("");
     const [message, setMessage] = useState("");
+    let navigate = useNavigate();
 
     const handleShowClick = () => setShowPassword(!showPassword);
 
@@ -29,10 +32,11 @@ export function LoginCard(props) {
             return;
         }
 
-        setMessage("")
-        console.log(username);
-        console.log(password);
-        console.log("Sending request....")
+        api.login(username, password, (res) => {
+            navigate("/dashboard")
+        }, (err) => {
+            setMessage("Incorrect Username and Password")
+        })
     }
 
     const handleRegister = () => {
@@ -50,12 +54,11 @@ export function LoginCard(props) {
             return;
         }
 
-        setMessage("")
-        console.log(email);
-        console.log(username);
-        console.log(password);
-        console.log(repPassword);
-        console.log("Sending request....")
+        api.signup(username, password, (res) => {
+            navigate("/dashboard")
+        }, (err) => {
+            setMessage("Username already exists")
+        })
     }
 
     const handleReset = () => {
