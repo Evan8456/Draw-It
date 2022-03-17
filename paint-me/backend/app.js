@@ -45,6 +45,10 @@ const session = require('express-session');
    secret: 'This is the final project',
    resave: false,
    saveUninitialized: true,
+   cookie: {
+	   httpOnly: true,
+	   secure: true,
+	   samesite : 'strict'
  }))
 
  
@@ -68,8 +72,11 @@ var isAuthenticated = function(req, res, next) {
     req.session.destroy();
     res.setHeader('Set-Cookie', cookie.serialize('username', '', {
           path : '/', 
-          maxAge: 60 * 60 * 24 * 7 // 1 week in number of seconds
-    }));
+          maxAge: 60 * 60 * 24 * 7,		  // 1 week in number of seconds
+		  httpOnly: true,
+		  secure: true,
+		  samesite : 'strict'
+	}));
     return res.json({});
     
 });
@@ -95,7 +102,10 @@ app.post('/signUp/',  function (req, res, next) {
                 req.session.user = username;
                 res.setHeader('Set-Cookie', cookie.serialize('username', username, {
                       path : '/', 
-                      maxAge: 60 * 60 * 24 * 7
+                      maxAge: 60 * 60 * 24 * 7,
+					  httpOnly: true,
+					  secure: true,
+					  samesite : 'strict'
                 }));
                 return res.json(username);
             });
@@ -103,24 +113,6 @@ app.post('/signUp/',  function (req, res, next) {
 
     });
 });
-
-
-
-
-  // userModel.insertMany({
-  //   username: "bob",
-  //   hashPassword: "testhash",
-  //   salt: "blah"
-    
-  // }).then(doc => {
-  //   console.log(doc)
-  //   res.json("done");
-  // })
-  // .catch(err => {
-  //   console.error(err)
-  // })
-      
-
 
 app.post('/login/',  function (req, res, next) {
    
