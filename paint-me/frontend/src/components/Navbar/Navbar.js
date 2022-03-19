@@ -23,6 +23,7 @@ function NavBar(props) {
 
     const createDraw = () => {
         console.log("Creating canvas");
+        navigate("/draw");
     }
 
     let CFaPlus = chakra(FaPlus);
@@ -71,7 +72,7 @@ function NavBar(props) {
         <Container  maxWidth="container.xl">
             <Flex align="center">
                 <Box p='2'>
-                    <Heading size='xl'>Draw-It</Heading>
+                    <Heading onClick={()=> navigate("/")} size='xl'>Draw-It</Heading>
                 </Box>
                 <Spacer/>
                 <Box>
