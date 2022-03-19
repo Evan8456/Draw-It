@@ -9,7 +9,6 @@ const pictureModel = require('./models/picture');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
-
 const {typeDefs} = require("./schema/type-defs");
 const {resolvers} = require("./schema/resolvers");
 
@@ -39,27 +38,66 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 const cookie = require('cookie');
-const session = require('express-session');
+var session = require("express-session")({
+  secret: process.env.SESSION_SECRET_KEY,
+  resave: true,
+  saveUninitialized: true,
+  cookie: {
+    httpOnly: true,
+    secure: false,
+    samesite : 'strict'
+   }
+});
+
+var sharedsession = require("express-socket.io-session");
 
 //DEV ONLY
 if(process.env.ENVIRONMENT == "dev") {
-  app.use(session({
-    secret: 'This is the final project',
-    resave: false,
-    saveUninitialized: true,
-    cookie: {
-      httpOnly: true,
-      secure: false,
-      samesite : 'strict'
-     }
-   }));
-
+  // cors for dev
   const cors = require('cors')
   app.use(cors({
     origin:'http://localhost:3000',
     credentials: true
   }));
+
+  const io = require("socket.io")(3002, {
+    cors:{
+      origin: ['http://localhost:3000'],
+    },
+    cookie: true
+  })
+
+
+  io.use(sharedsession(session, {
+    autoSave:true
+  })); 
+
+  app.use(session);
+  
+  io.on("connection", socket =>{
+    console.log(socket.id)
+    socket.on("drawing", (data, room) =>{
+      console.log("currently drawing on room: " + room);
+      socket.to(room).emit('drawing', data);
+      //io.broadcast.emit('test2',param1);
+      //socket.to(room);
+    })
+    socket.on("join-room", (room) =>{
+      var rooms = socket.rooms;
+      console.log(socket.rooms);
+      rooms.forEach(element => {
+        console.log(element);
+        socket.leave(element);
+      });
+      socket.join(room);
+      console.log(socket.rooms);
+    })
+  })
+  
+
+
 } else {
+  console.log("????")
   app.use(session({
     secret: 'This is the final project',
     resave: false,
@@ -101,7 +139,8 @@ var isAuthenticated = function(req, res, next) {
 
 
 
-app.post('/signUp/',  function (req, res, next) {
+app.post('/signup/',  function (req, res, next) {
+  console.log("test");
   var username = req.body.username;
   var password = req.body.password;
   bcrypt.hash(password, saltRounds, function(err, hash) {
@@ -154,6 +193,7 @@ app.post('/signin/',  function (req, res, next) {
 });
 
 app.get('/authenticate/', function(req, res, next){
+  console.log("authenticate session")
   console.log(req.session)
   if(req.session.username) {
     return res.status(200).send({status:"success"});

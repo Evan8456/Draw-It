@@ -1,0 +1,19 @@
+[Unit]
+Description=backend for paintme application
+After=network.service
+
+[Service]
+WorkingDirectory=/opt/project-cswasamistake/paint-me/backend
+User=eric
+Group=eric
+Restart=always
+Type=simple
+Restart=always
+
+RestartSec=3s
+
+#ExecStartPre=/usr/bin/env npm install
+ExecStart=/usr/bin/env node app.js
+
+[Install]
+WantedBy=multi-user.target
