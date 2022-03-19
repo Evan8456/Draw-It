@@ -2,7 +2,11 @@ import React, { useState, useRef, useEffect } from "react";
 import "./Draw.css";
 import { useNavigate } from 'react-router-dom';
 import api from "../../api"
+
 import {io} from 'socket.io-client';
+
+import Navbar from "../Navbar/Navbar";
+
 
 export function Draw() {
   const canvasRef = useRef();
@@ -47,6 +51,8 @@ export function Draw() {
     context.lineCap = 'round';
     context.strokeStyle = "#000000";
     context.lineWidth = 5;
+    context.fillStyle = "white";
+    context.fillRect(0, 0, canvas.width, canvas.height);
     contextRef.current = context;
 
 
@@ -162,7 +168,7 @@ export function Draw() {
   return (
     <>
       <div>
-        <h1>Lets Draw</h1>
+      <Navbar page="dashboard"/>
         <canvas
           className="test"
           onMouseDown={onMouseDown}
