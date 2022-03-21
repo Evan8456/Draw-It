@@ -12,6 +12,7 @@ export function Draw() {
   const canvasRef = useRef();
   const contextRef = useRef();
   const colorRef = useRef();
+  const thickRef = useRef();
   const [isDrawing, setIsDrawing] = useState(false);
   const [thickness, setThick] = useState(null);
   const [startX, setStartX] = useState(null);
@@ -47,12 +48,15 @@ export function Draw() {
     canvas.height = 600 * 2;
 
     const context = canvas.getContext("2d");
+    context.fillStyle = "white";
+    context.fillRect(0, 0, canvas.width, canvas.height);
     context.scale(2, 2);
     context.lineCap = 'round';
     context.strokeStyle = "#000000";
     context.lineWidth = 5;
-    context.fillStyle = "white";
-    context.fillRect(0, 0, canvas.width, canvas.height);
+    colorRef.current.value = "#000000";
+    thickRef.current.value = 5;
+    
     contextRef.current = context;
 
 
@@ -69,7 +73,7 @@ export function Draw() {
     contextRef.current.stroke();
     contextRef.current.closePath();
     context.strokeStyle= colorRef.current.value;
-    context.lineWidth = thickness;
+    context.lineWidth = thickRef.current.value;
 
   }
   function joinRoom1(){
@@ -96,7 +100,15 @@ export function Draw() {
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");
     context.strokeStyle = color;
+    console.log(context.strokeStyle);
   };
+
+  function makeErase(){
+    const canvas = canvasRef.current;
+    const context = canvas.getContext("2d");
+    context.strokeStyle = "#FFFFFF";
+    colorRef.current.value = "#FFFFFF";
+  }
 
   function downloadCanvas(){
     const canvas = canvasRef.current;
@@ -147,6 +159,7 @@ export function Draw() {
     const { offsetX, offsetY } = e.nativeEvent;
     setStartX(offsetX);
     setStartY(offsetY);
+    console.log(canvasRef.current.getContext('2d').strokeStyle);
     contextRef.current.lineTo(offsetX, offsetY);
     contextRef.current.stroke();
 
@@ -192,9 +205,10 @@ export function Draw() {
           max="50"
           defaultValue="3"
           step="1"
+          ref={thickRef}
         />
 
-        <button onClick={() => changeColor("#FFFFFF")}>Erase</button>
+        <button onClick={() => makeErase()}>Erase</button>
 
         <button onClick={() => joinRoom1()}>Test Room 1</button>
         <button onClick={() => joinRoom2()}>Test Room 2</button>
