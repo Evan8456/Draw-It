@@ -3,6 +3,7 @@ import { Route, BrowserRouter, Navigate, Routes} from 'react-router-dom';
 import "./App.css";
 import Dashboard from "./components/Dashboard/Dashboard";
 import { Draw } from "./components/Draw/Draw";
+import { SoloDraw } from "./components/SoloDraw/SoloDraw";
 import  Login  from "./components/Login/Login";
 import api from "./api";
 
@@ -27,6 +28,11 @@ function App() {
         <Route path="/draw" element={
           <ProtectedRoute auth={auth}>
             <Draw/>
+          </ProtectedRoute>
+        }/>
+        <Route path="/SoloDraw" element={
+          <ProtectedRoute auth={auth}>
+            <SoloDraw/>
           </ProtectedRoute>
         }/>
         <Route path="/dashboard" element={

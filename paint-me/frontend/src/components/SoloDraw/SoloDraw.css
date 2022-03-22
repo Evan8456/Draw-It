@@ -1,0 +1,9 @@
+canvas {
+    border: 1px solid #000000;
+    width: 600px;
+    height: 600px;
+  }
+
+  .tools{
+    margin-left: 80px;
+  }

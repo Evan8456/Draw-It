@@ -26,6 +26,10 @@ function NavBar(props) {
         navigate("/draw");
     }
 
+    const createSoloDraw = () => {
+        navigate("/SoloDraw");
+    }
+
     let CFaPlus = chakra(FaPlus);
 
     let button;
@@ -43,7 +47,30 @@ function NavBar(props) {
         }
         button = 
         <Flex flexDirection="row">
+
             <Box as="button" 
+            onClick={() => createSoloDraw()} 
+            rounded="2xl" 
+            bg="cyan.50" 
+            boxShadow="md" 
+            height='40px'
+            lineHeight='1.2'
+            transition='all 0.2s cubic-bezier(.08,.52,.52,1)'
+            border='1px'
+            px='8px'
+            fontSize='14px'
+            fontWeight='semibold'
+            borderColor='#ccd0d5'
+            color='#4b4f56'
+            display="flex"
+            flexDirection="row"
+            alignItems="center"
+
+            _hover={{ bg: 'cyan.100' }}>
+                <CFaPlus color="teal"/>&nbsp;Create Solo
+            </Box>
+
+            <Box as="button"  marginLeft="3"    
             onClick={() => createDraw()} 
             rounded="2xl" 
             bg="cyan.50" 
@@ -62,7 +89,7 @@ function NavBar(props) {
             alignItems="center"
 
             _hover={{ bg: 'cyan.100' }}>
-                <CFaPlus color="teal"/>&nbsp;Create
+                <CFaPlus color="teal"/>&nbsp;Collab
             </Box>
             <Button onClick={() => signOut()} marginLeft="3">Sign Out</Button>
         </Flex>
