@@ -4,8 +4,12 @@ import "./SoloDraw.css";
 import { useNavigate } from 'react-router-dom';
 import api from "../../api"
 import Navbar from "../Navbar/Navbar";
+import { FaPlus } from 'react-icons/fa';
+import { Box, Button, chakra} from "@chakra-ui/react";
+
 
 export function SoloDraw() {
+  let CFaPlus = chakra(FaPlus);
   const canvasRef = useRef();
   const contextRef = useRef();
   const colorRef = useRef();
@@ -22,8 +26,6 @@ export function SoloDraw() {
 
     api.authenticate((res) => {
       //pass
-
-        
       }, (err) => {
           navigate("/")
       })
@@ -61,7 +63,6 @@ export function SoloDraw() {
     link.click();
 
   }
- 
 
   const setThickness = (thickness) => {
     console.log(thickness);
@@ -129,13 +130,50 @@ export function SoloDraw() {
 
   return (
     <>
+   
       <Navbar page="dashboard"/>  
+      <div className="solo-draw">
       <input type="file" ref={importImg} onChange={() => addImg()}  accept="image/png, image/jpeg"/>
-       <button  onClick={() => uploadImg()}>Upload</button>
+      
+       <Box as="button" 
+            onClick={() =>  uploadImg()} 
+            rounded="2xl" 
+            bg="teal.50" 
+            lineHeight='1.2'
+            boxShadow="md" 
+            height='35px'
+            transition='all 0.2s cubic-bezier(.08,.52,.52,1)'
+            border='1px'
+            px='8px'
+            fontSize='15px'
+            fontWeight='semibold'
+            borderColor='#ccd0d5'
+            className="tools"
+            width='75px'
+            
 
-       
+            _hover={{ bg: 'green.100' }}>
+               Upload
+          </Box>
 
-       <button className="tools" onClick={() => clearCanvas()}>Clear</button> 
+       <Box as="button" 
+            onClick={() => clearCanvas()} 
+            rounded="2xl" 
+            bg="grey.50" 
+            lineHeight='1.2'
+            boxShadow="md" 
+            height='35px'
+            transition='all 0.2s cubic-bezier(.08,.52,.52,1)'
+            border='1px'
+            px='8px'
+            fontSize='14px'
+            fontWeight='semibold'
+            borderColor='#ccd0d5'
+            className="tools"
+            width='75px'
+            _hover={{ bg: 'white.100' }}>
+               Clear
+          </Box>
 
         <canvas
           className="test"
@@ -146,7 +184,25 @@ export function SoloDraw() {
         />
         
         <div >
-        <button onClick={() => downloadCanvas()}>Export to PNG</button>
+
+        <Box as="button" 
+            onClick={() => downloadCanvas()} 
+            rounded="2xl" 
+            bg="green.50" 
+            height='40px'
+            transition='all 0.2s cubic-bezier(.08,.52,.52,1)'
+            border='1px'
+            px='8px'
+            fontSize='14px'
+            fontWeight='semibold'
+            borderColor='#ccd0d5'
+            className="tools"
+            width='120px'
+
+            _hover={{ bg: 'green.100' }}>
+               Export to PNG
+          </Box>
+
         <input
           className="tools"
           onChange={() => changeColor(colorRef.current.value)}
@@ -163,12 +219,30 @@ export function SoloDraw() {
           step="1"
         />
 
-        <button className="tools" onClick={() => changeColor("#FFFFFF")}>Erase</button>
+        <Box as="button" 
+            onClick={() => changeColor("#FFFFFF")} 
+            rounded="2xl" 
+            bg="red.50" 
+            boxShadow="md" 
+            height='35px'
+            lineHeight='1.2'
+            transition='all 0.2s cubic-bezier(.08,.52,.52,1)'
+            border='1px'
+            px='8px'
+            fontSize='14px'
+            fontWeight='semibold'
+            borderColor='#ccd0d5'
+            className="tools"
+            width='75px'
+            _hover={{ bg: 'red.100' }}>
+               Eraser
+          </Box>
 
 	   
      
         </div>
       
+      </div>
      
     </>
   );

@@ -3,3 +3,8 @@ canvas {
     width: 600px;
     height: 600px;
   }
+
+  .draw{
+    display: table;
+    margin: 0 auto;
+    }

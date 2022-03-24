@@ -6,6 +6,7 @@ import api from "../../api"
 import {io} from 'socket.io-client';
 
 import Navbar from "../Navbar/Navbar";
+import { Box, Button, chakra} from "@chakra-ui/react";
 
 
 export function Draw() {
@@ -180,8 +181,10 @@ export function Draw() {
 
   return (
     <>
-      <div>
+    
+      
       <Navbar page="dashboard"/>
+      <div className="draw">
         <canvas
           className="test"
           onMouseDown={onMouseDown}
@@ -189,10 +192,26 @@ export function Draw() {
           onMouseMove={draw}
           ref={canvasRef}
         />
-      </div>
-
+      
       <div>
-		<button onClick={() => downloadCanvas()}>Export to PNG</button>
+      <Box as="button" 
+            onClick={() => downloadCanvas()} 
+            rounded="2xl" 
+            bg="green.50" 
+            height='40px'
+            transition='all 0.2s cubic-bezier(.08,.52,.52,1)'
+            border='1px'
+            px='8px'
+            fontSize='14px'
+            fontWeight='semibold'
+            borderColor='#ccd0d5'
+            className="tools"
+            width='120px'
+
+            _hover={{ bg: 'green.100' }}>
+               Export to PNG
+          </Box>
+
         <input
           onChange={() => changeColor(colorRef.current.value)}
           ref={colorRef}
@@ -207,11 +226,28 @@ export function Draw() {
           step="1"
           ref={thickRef}
         />
-
-        <button onClick={() => makeErase()}>Erase</button>
+        <Box as="button" 
+            onClick={() => makeErase()} 
+            rounded="2xl" 
+            bg="red.50" 
+            boxShadow="md" 
+            height='35px'
+            lineHeight='1.2'
+            transition='all 0.2s cubic-bezier(.08,.52,.52,1)'
+            border='1px'
+            px='8px'
+            fontSize='14px'
+            fontWeight='semibold'
+            borderColor='#ccd0d5'
+            className="tools"
+            width='75px'
+            _hover={{ bg: 'red.100' }}>
+               Eraser
+          </Box>
 
         <button onClick={() => joinRoom1()}>Test Room 1</button>
         <button onClick={() => joinRoom2()}>Test Room 2</button>
+      </div>
       </div>
     </>
   );
