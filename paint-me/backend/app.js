@@ -12,28 +12,19 @@ const saltRounds = 10;
 const {typeDefs} = require("./schema/type-defs");
 const {resolvers} = require("./schema/resolvers");
 
-  mongoose.connect(process.env.MONGODB_CONNECTION);
+mongoose.connect(process.env.MONGODB_CONNECTION);
 
-  mongoose.connection.once('open', function() { 
-    console.log('Connected to the Database.');
-  });
+mongoose.connection.once('open', function() { 
+  console.log('Connected to the Database.');
+});
 
-  mongoose.connection.on('error', function(error) {
-    console.log('Mongoose Connection Error : ' + error);
-  });
-
-
+mongoose.connection.on('error', function(error) {
+  console.log('Mongoose Connection Error : ' + error);
+});
+  
 const app = express();
 const router = express.Router();
 
-
-async function start() {
-    const server = new ApolloServer({ typeDefs, resolvers });
-    await server.start()
-    
-    server.applyMiddleware({ app });
-}
-start();
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -56,7 +47,7 @@ if(process.env.ENVIRONMENT == "dev") {
   // cors for dev
   const cors = require('cors')
   app.use(cors({
-    origin:'http://localhost:3000',
+    origin:['http://localhost:3000', 'https://studio.apollographql.com'],
     credentials: true
   }));
 
@@ -73,6 +64,15 @@ if(process.env.ENVIRONMENT == "dev") {
   })); 
 
   app.use(session);
+
+  async function start() {
+    const server = new ApolloServer({ typeDefs, resolvers,
+    context: ({req, res}) => ({req, res})});
+    await server.start()
+    
+    server.applyMiddleware({ app });
+  }
+  start();
   
   io.on("connection", socket =>{
     console.log(socket.id)
