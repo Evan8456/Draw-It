@@ -8,7 +8,7 @@ const roomModel = require('./models/room');
 const pictureModel = require('./models/picture');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
-
+const fs = require('fs');
 const {typeDefs} = require("./schema/type-defs");
 const {resolvers} = require("./schema/resolvers");
 
