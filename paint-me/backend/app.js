@@ -11,7 +11,7 @@ const saltRounds = 10;
 const fs = require('fs');
 const {typeDefs} = require("./schema/type-defs");
 const {resolvers} = require("./schema/resolvers");
-
+const cors = require('cors')
 mongoose.connect(process.env.MONGODB_CONNECTION);
 
 mongoose.connection.once('open', function() { 
@@ -33,7 +33,6 @@ var sharedsession = require("express-socket.io-session");
 
 //DEV ONLY
 if(process.env.ENVIRONMENT == "dev") {
-  const httpServer = require("http").createServer(app);
   var session = require("express-session")({
     secret: process.env.SESSION_SECRET_KEY,
     resave: true,
@@ -44,26 +43,19 @@ if(process.env.ENVIRONMENT == "dev") {
       samesite : 'strict'
      }
   });
-  // cors for dev
-  const cors = require('cors')
   app.use(cors({
     origin:['http://localhost:3000', 'https://studio.apollographql.com'],
     credentials: true
   }));
-  const io = require("socket.io")(httpServer, {
-    path: '/',
-    cors:{
-      origin: ['http://localhost:3000'],
-    },
-    cookie: true,
-    origins: 'http://localhost:3000',
-    transports:['websocket',
-    'flashsocket',
-    'htmlfile',
-    'xhr-polling',
-    'jsonp-polling',
-    'polling']
-  });
+  // cors for dev
+  app.use(session);
+  const httpServer = require("http").createServer(app);
+  
+  const io = require("socket.io")(httpServer,
+    {cors: {
+      origin: "http://localhost:3000",
+      methods: ["GET", "POST"]
+    }});
   console.log("Dev")
   // both use
   //socket io
@@ -90,7 +82,6 @@ if(process.env.ENVIRONMENT == "dev") {
     })
   })
   // apollo server
-  app.use(session);
   async function start() {
     const server = new ApolloServer({ typeDefs, resolvers,
     context: ({req, res}) => ({req, res})});
@@ -123,16 +114,7 @@ if(process.env.ENVIRONMENT == "dev") {
      }
   });
   const io = require("socket.io")(httpsServer, {
-    path: '/',
-    cookie: true,
-    origins: 'http://localhost:3000',
-    transports:['websocket',
-    'flashsocket',
-    'htmlfile',
-    'xhr-polling',
-    'jsonp-polling',
-    'polling']
-  });
+    origins: 'http://localhost:3000'});
   console.log("Server")
   // both use
   //socket io
@@ -260,7 +242,7 @@ app.get('/authenticate/', function(req, res, next){
 
 
 
-app.listen({ port: 3001 }, () =>
-  console.log(`Server running on http://localhost:3001, test queries on http://localhost:3001/graphql`)
+//app.listen({ port: 3001 }, () =>
+  //console.log(`Server running on http://localhost:3001, test queries on http://localhost:3001/graphql`)
   
-);
+//);
