@@ -124,7 +124,14 @@ if(process.env.ENVIRONMENT == "dev") {
   });
   const io = require("socket.io")(httpsServer, {
     path: '/',
-    cookie: true
+    cookie: true,
+    origins: 'http://localhost:3000',
+    transports:['websocket',
+    'flashsocket',
+    'htmlfile',
+    'xhr-polling',
+    'jsonp-polling',
+    'polling']
   });
   console.log("Server")
   // both use
