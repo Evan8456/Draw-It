@@ -1,0 +1,66 @@
+name: Production deployment
+
+on:
+  # Triggers the workflow on completed test workflow runs, but only for the main branch
+  workflow_run:
+    workflows: ["Python Test"]
+    branches: [main]
+    types:
+      - completed
+
+jobs:
+  deploy:
+    name: Deployment
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checks-out the repository under $GITHUB_WORKSPACE
+      - name: Checkout Git Repository
+        uses: actions/checkout@v2
+
+      # Runs a single command using the runners shell
+      - name: Save Secret .env localy
+        run: echo "${{ secrets.PROD_DEPLOY_ENV_FILE }}" > ${{ github.workspace }}/.env
+
+      - name: Save Secret gspread.json localy
+        run: echo "${{ secrets.PROD_DEPLOY_GSPREAD_FILE }}" | base64 --decode > ${{ github.workspace }}/gspread.json
+      
+      - name: Stop App on Server
+        uses: appleboy/ssh-action@v0.1.4
+        with:
+          key: ${{ secrets.PROD_DEPLOY_SSH_KEY }}
+          host: ${{ secrets.PROD_DEPLOY_HOST }}
+          port: ${{ secrets.PROD_DEPLOY_PORT }}
+          username: ${{ secrets.PROD_DEPLOY_USERNAME }}
+          script: ${{ secrets.PROD_DEPLOY_COMMAND_STOP }}
+      
+      - name: Copy Code to Server
+        uses: burnett01/rsync-deployments@5.1
+        with:
+          remote_key: ${{ secrets.PROD_DEPLOY_SSH_KEY }}
+          remote_host: ${{ secrets.PROD_DEPLOY_HOST }}
+          remote_port : ${{ secrets.PROD_DEPLOY_PORT }}
+          remote_user: ${{ secrets.PROD_DEPLOY_USERNAME }}
+          remote_path: ${{ secrets.PROD_DEPLOY_TARGET_PATH }}
+          switches: -avzr --delete
+          
+      - name: Install dependencies on Server
+        uses: appleboy/ssh-action@v0.1.4
+        env:
+          PIPENV_YES: "true"
+        with:
+          key: ${{ secrets.PROD_DEPLOY_SSH_KEY }}
+          host: ${{ secrets.PROD_DEPLOY_HOST }}
+          port: ${{ secrets.PROD_DEPLOY_PORT }}
+          username: ${{ secrets.PROD_DEPLOY_USERNAME }}
+          envs: PIPENV_YES
+          script: cd ${{ secrets.PROD_DEPLOY_TARGET_PATH }} && pipenv install --deploy
+          
+      - name: Start App on Server
+        uses: appleboy/ssh-action@v0.1.4
+        with:
+          key: ${{ secrets.PROD_DEPLOY_SSH_KEY }}
+          host: ${{ secrets.PROD_DEPLOY_HOST }}
+          port: ${{ secrets.PROD_DEPLOY_PORT }}
+          username: ${{ secrets.PROD_DEPLOY_USERNAME }}
+          script: ${{ secrets.PROD_DEPLOY_COMMAND_START }}

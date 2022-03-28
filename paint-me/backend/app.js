@@ -8,10 +8,10 @@ const roomModel = require('./models/room');
 const pictureModel = require('./models/picture');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
-
+const fs = require('fs');
 const {typeDefs} = require("./schema/type-defs");
 const {resolvers} = require("./schema/resolvers");
-
+const cors = require('cors')
 mongoose.connect(process.env.MONGODB_CONNECTION);
 
 mongoose.connection.once('open', function() { 
@@ -29,51 +29,39 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 const cookie = require('cookie');
-var session = require("express-session")({
-  secret: process.env.SESSION_SECRET_KEY,
-  resave: true,
-  saveUninitialized: true,
-  cookie: {
-    httpOnly: true,
-    secure: false,
-    samesite : 'strict'
-   }
-});
-
 var sharedsession = require("express-socket.io-session");
 
 //DEV ONLY
 if(process.env.ENVIRONMENT == "dev") {
-  // cors for dev
-  const cors = require('cors')
+  var session = require("express-session")({
+    secret: process.env.SESSION_SECRET_KEY,
+    resave: true,
+    saveUninitialized: true,
+    cookie: {
+      httpOnly: true,
+      secure: false,
+      samesite : 'strict'
+     }
+  });
   app.use(cors({
     origin:['http://localhost:3000', 'https://studio.apollographql.com'],
     credentials: true
   }));
-
-  const io = require("socket.io")(3002, {
-    cors:{
-      origin: ['http://localhost:3000'],
-    },
-    cookie: true
-  })
-
-
+  // cors for dev
+  app.use(session);
+  const httpServer = require("http").createServer(app);
+  
+  const io = require("socket.io")(httpServer,
+    {cors: {
+      origin: "http://localhost:3000",
+      methods: ["GET", "POST"]
+    }});
+  console.log("Dev")
+  // both use
+  //socket io
   io.use(sharedsession(session, {
     autoSave:true
   })); 
-
-  app.use(session);
-
-  async function start() {
-    const server = new ApolloServer({ typeDefs, resolvers,
-    context: ({req, res}) => ({req, res})});
-    await server.start()
-    
-    server.applyMiddleware({ app });
-  }
-  start();
-  
   io.on("connection", socket =>{
     console.log(socket.id)
     socket.on("drawing", (data, room) =>{
@@ -93,40 +81,94 @@ if(process.env.ENVIRONMENT == "dev") {
       console.log(socket.rooms);
     })
   })
-  
-
-
+  // apollo server
+  async function start() {
+    const server = new ApolloServer({ typeDefs, resolvers,
+    context: ({req, res}) => ({req, res})});
+    await server.start()
+    
+    server.applyMiddleware({ app });
+  }
+  start();
+  httpServer.listen(3002, () => {
+    console.log("Websocket started at port ", 3002)
+  });
 } else {
-  console.log("????")
-  app.use(session({
-    secret: 'This is the final project',
-    resave: false,
+  var privateKey  = fs.readFileSync('/etc/letsencrypt/live/draw-it.me/privkey.pem');
+  var certificate = fs.readFileSync('/etc/letsencrypt/live/draw-it.me/cert.pem');
+  var chain = fs.readFileSync('/etc/letsencrypt/live/draw-it.me/chain.pem');
+  var httpsServer = 
+  require('https').createServer({key: privateKey,
+    cert: certificate,
+    ca: chain,
+    requestCert: false,
+    rejectUnauthorized: false },app);
+  var session = require("express-session")({
+    secret: process.env.SESSION_SECRET_KEY,
+    resave: true,
     saveUninitialized: true,
     cookie: {
       httpOnly: true,
       secure: true,
       samesite : 'strict'
      }
-   }));
+  });
+  const io = require("socket.io")(httpsServer, {
+    origins: 'https://localhost:3000'});
+  console.log("Server")
+  // both use
+  //socket io
+  io.use(sharedsession(session, {
+    autoSave:true
+  })); 
+  io.on("connection", socket =>{
+    console.log(socket.id)
+    socket.on("drawing", (data, room) =>{
+      console.log("currently drawing on room: " + room);
+      socket.to(room).emit('drawing', data);
+      //io.broadcast.emit('test2',param1);
+      //socket.to(room);
+    })
+    socket.on("join-room", (room) =>{
+      var rooms = socket.rooms;
+      console.log(socket.rooms);
+      rooms.forEach(element => {
+        console.log(element);
+        socket.leave(element);
+      });
+      socket.join(room);
+      console.log(socket.rooms);
+    })
+  })
+  // apollo server
+  app.use(session);
+  async function start() {
+    const server = new ApolloServer({ typeDefs, resolvers,
+    context: ({req, res}) => ({req, res})});
+    await server.start()
+    
+    server.applyMiddleware({ app });
+  }
+  start();
+
+  httpsServer.listen(3002, () => {
+    console.log("Websocket started at port ", 3002)
+  });
 }
- 
+
+// rest api
 var isAuthenticated = function(req, res, next) {
   if (!req.session.username) return res.status(401).end("access denied");
   next();
 };
-
- app.use(function (req, res, next){
-   var cookies = cookie.parse(req.headers.cookie || '');
-   console.log(req.session.username);
-   req.username =(req.session.user)? req.session.user.username : ''
-   console.log("HTTP request", req.username, req.method, req.url, req.body);
-   next();
- });
-
- 
-
-
-  app.get('/signout/',  isAuthenticated,function (req, res, next) {
+app.use(function (req, res, next){
+  var cookies = cookie.parse(req.headers.cookie || '');
+  console.log(req.session.username);
+  req.username =(req.session.user)? req.session.user.username : ''
+  console.log("HTTP request", req.username, req.method, req.url, req.body);
+  next();
+});
+app.get('/signout/',  isAuthenticated,function (req, res, next) {
     req.session.destroy();
     res.setHeader('Set-Cookie', cookie.serialize('username', '', {
           path : '/', 
@@ -136,9 +178,6 @@ var isAuthenticated = function(req, res, next) {
     return res.json({});
     
 });
-
-
-
 app.post('/signup/',  function (req, res, next) {
   console.log("test");
   var username = req.body.username;
@@ -165,7 +204,6 @@ app.post('/signup/',  function (req, res, next) {
 
     });
 });
-
 app.post('/signin/',  function (req, res, next) {
    
   var username = req.body.username;
@@ -191,7 +229,6 @@ app.post('/signin/',  function (req, res, next) {
         
     });
 });
-
 app.get('/authenticate/', function(req, res, next){
   console.log("authenticate session")
   console.log(req.session)
@@ -205,9 +242,7 @@ app.get('/authenticate/', function(req, res, next){
 
 
 
-
-
-app.listen({ port: 3001 }, () =>
-  console.log(`Server running on http://localhost:3001, test queries on http://localhost:3001/graphql`)
+//app.listen({ port: 3001 }, () =>
+  //console.log(`Server running on http://localhost:3001, test queries on http://localhost:3001/graphql`)
   
-);
+//);
