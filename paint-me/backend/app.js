@@ -114,7 +114,7 @@ if(process.env.ENVIRONMENT == "dev") {
      }
   });
   const io = require("socket.io")(httpsServer, {
-    origins: 'http://localhost:3000'});
+    origins: 'https://localhost:3000'});
   console.log("Server")
   // both use
   //socket io
