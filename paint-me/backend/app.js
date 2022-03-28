@@ -55,7 +55,14 @@ if(process.env.ENVIRONMENT == "dev") {
     cors:{
       origin: ['http://localhost:3000'],
     },
-    cookie: true
+    cookie: true,
+    origins: 'http://localhost:3000',
+    transports:['websocket',
+    'flashsocket',
+    'htmlfile',
+    'xhr-polling',
+    'jsonp-polling',
+    'polling']
   });
   console.log("Dev")
   // both use
@@ -154,15 +161,6 @@ if(process.env.ENVIRONMENT == "dev") {
     server.applyMiddleware({ app });
   }
   start();
-
-  io.set('origins', 'http://localhost:3000');
-
-  io.set('transports', ['websocket',
-    'flashsocket',
-    'htmlfile',
-    'xhr-polling',
-    'jsonp-polling',
-    'polling']);
 
   httpsServer.listen(3002, () => {
     console.log("Websocket started at port ", 3002)
