@@ -155,6 +155,15 @@ if(process.env.ENVIRONMENT == "dev") {
   }
   start();
 
+  io.set('origins', 'http://localhost:3000');
+
+  io.set('transports', ['websocket',
+    'flashsocket',
+    'htmlfile',
+    'xhr-polling',
+    'jsonp-polling',
+    'polling']);
+
   httpsServer.listen(3002, () => {
     console.log("Websocket started at port ", 3002)
   });

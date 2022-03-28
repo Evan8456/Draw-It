@@ -29,7 +29,7 @@ export function Draw() {
 
     api.authenticate((res) => {
 
-      const socket = io(process.env.REACT_APP_SOCKET)
+      const socket = io(process.env.REACT_APP_SOCKET,{secure: true})
       setS(socket);
 
       socket.on('drawing', goDraw);
