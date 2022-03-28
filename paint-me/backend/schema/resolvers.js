@@ -2,19 +2,19 @@ const {gql, AuthenticationError, UserInputError} = require("apollo-server-expres
 const bcrypt = require('bcrypt');
 const userModel = require('../models/user');
 const cookie = require('cookie');
-
+const validator = require('validator');
 const saltRounds = 10;
 
 const resolvers = {
     Query:{
         signout: (_, data, {req, res}) => {
-            console.log("BEFORE: " + req.session.username)
+            
             req.session.destroy();
             res.setHeader('Set-Cookie', cookie.serialize('username', '', {
                 path : '/', 
                 maxAge: 60 * 60 * 24 * 7,		  // 1 week in number of seconds
             }));
-            console.log("After: " + req.session)
+            
             return "success";
         },
         
@@ -31,6 +31,11 @@ const resolvers = {
         signin: async (_, data, {req, res}) => {
             const username = data.username
             const password = data.password
+            if(username !== validator.escape(username)){
+                return new UserInputError("Invalid input");
+            }else if(password !== validator.escape(password)){
+                return new UserInputError("Invalid input");
+            }
 
             try {
                 const t = await userModel.findOne({username: username}).exec();
@@ -57,6 +62,12 @@ const resolvers = {
         signup: async (_, data, {req, res}) => {
             const username = data.username
             const password = data.password
+
+            if(username !== validator.escape(username)){
+                return new UserInputError("Invalid input");
+            }else if(password !== validator.escape(password)){
+                return new UserInputError("Invalid input");
+            }
 
             try {
                 const hash = await bcrypt.hash(password, saltRounds)
