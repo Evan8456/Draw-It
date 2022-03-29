@@ -1,0 +1,32 @@
+name: Node Test
+
+on:
+  # Triggers the workflow on push events but only for the main branch
+  push:
+    branches: [ main ]
+
+jobs:
+  test:
+    name: Testing
+    runs-on: ubuntu-latest
+
+    steps:
+    # Checks-out the repository under $GITHUB_WORKSPACE
+    - name: Checkout Git Repository
+      uses: actions/checkout@v2
+    
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.10.0
+    
+    # Runs a command using the runners shell
+    - name: Install dependencies
+      env:
+          PIPENV_YES: "true"
+      run: |
+        python -m pip install --upgrade pipenv
+        python -m pipenv install --dev --deploy
+        
+    - name: Lint with pylint
+      run: python -m pipenv run pylint --exit-zero

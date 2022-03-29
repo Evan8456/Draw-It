@@ -30,7 +30,7 @@ export function Draw() {
       if(res.errors) {
         navigate("/");
       } else {
-        const socket = io(process.env.REACT_APP_SOCKET)
+        const socket = io(process.env.REACT_APP_SOCKET,{secure: true})
         setS(socket);
 
         socket.on('drawing', goDraw);
