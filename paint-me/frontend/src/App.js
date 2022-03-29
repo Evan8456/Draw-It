@@ -5,7 +5,6 @@ import Dashboard from "./components/Dashboard/Dashboard";
 import { Draw } from "./components/Draw/Draw";
 import { SoloDraw } from "./components/SoloDraw/SoloDraw";
 import  Login  from "./components/Login/Login";
-import api from "./api";
 
 const ProtectedRoute = ({ auth, children }) => {
   if (!auth) {

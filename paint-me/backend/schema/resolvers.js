@@ -22,7 +22,7 @@ const resolvers = {
             if(req.session.username) {
                 return "success"
             } else {
-                return "failure"
+                throw new AuthenticationError();
             }
         }
     },
@@ -40,8 +40,6 @@ const resolvers = {
                 if(!match) return new AuthenticationError("Incorrect Password")
 
                 req.session.username = username;
-
-                console.log(req.session)
 
                 res.setHeader('Set-Cookie', cookie.serialize('username', username, {
                     path : '/', 

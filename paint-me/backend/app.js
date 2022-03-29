@@ -42,14 +42,16 @@ var session = require("express-session")({
 
 var sharedsession = require("express-socket.io-session");
 
+var corsOptions = {
+  origin:['http://localhost:3000', 'https://studio.apollographql.com'],
+  credentials: true
+}
+
 //DEV ONLY
 if(process.env.ENVIRONMENT == "dev") {
   // cors for dev
   const cors = require('cors')
-  app.use(cors({
-    origin:['http://localhost:3000', 'https://studio.apollographql.com'],
-    credentials: true
-  }));
+  app.use(cors(corsOptions));
 
   const io = require("socket.io")(3002, {
     cors:{
@@ -67,10 +69,12 @@ if(process.env.ENVIRONMENT == "dev") {
 
   async function start() {
     const server = new ApolloServer({ typeDefs, resolvers,
-    context: ({req, res}) => ({req, res})});
+    context: ({req, res}) => ({req, res}),
+    cors: false
+    });
     await server.start()
     
-    server.applyMiddleware({ app });
+    server.applyMiddleware({ app, cors:corsOptions });
   }
   start();
   

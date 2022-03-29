@@ -12,8 +12,11 @@ function Dashboard(props) {
     let navigate = useNavigate();
 
     useEffect(() => {
+
         api.authenticate((res) => {
-            console.log("Logged in");
+            if(res.errors) {
+                navigate("/")
+            }
         }, (err) => {
             navigate("/")
         })

@@ -33,9 +33,13 @@ export function LoginCard(props) {
         }
 
         api.login(username, password, (res) => {
-            navigate("/dashboard")
-        }, (err) => {
-            setMessage("Incorrect Username and Password")
+            if(res.errors) {
+                setMessage(res.errors[0].message);
+            } else {
+                navigate("/dashboard")
+            }
+        }, (err, res) => {
+            setMessage(err)
         })
     }
 
@@ -55,9 +59,13 @@ export function LoginCard(props) {
         }
 
         api.signup(username, password, (res) => {
-            navigate("/dashboard")
+            if(res.errors) {
+                setMessage(res.errors[0].message);
+            } else {
+                navigate("/dashboard")
+            }
         }, (err) => {
-            setMessage("Username already exists")
+            setMessage(err)
         })
     }
 
