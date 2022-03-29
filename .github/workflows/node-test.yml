@@ -24,7 +24,5 @@ jobs:
       run: |
         cd ./paint-me/frontend
         npm install
-        npm test
         cd ../backend/
         npm install
-        npm test
