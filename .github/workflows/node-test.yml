@@ -1,4 +1,4 @@
-name:Node Test
+name: Node Test
 
 on:
   # Triggers the workflow on push events but only for the main branch
