@@ -3,7 +3,7 @@ name: Production deployment
 on:
   # Triggers the workflow on completed test workflow runs, but only for the main branch
   workflow_run:
-    workflows: [Node Test]
+    workflows: [Node test]
     branches: [ httpsServer ]
     types:
       - completed
