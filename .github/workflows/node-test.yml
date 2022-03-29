@@ -3,7 +3,7 @@ name: Node Test
 on:
   # Triggers the workflow on push events but only for the main branch
   push:
-    branches: [ main ]
+    branches: [ httpsServer ]
 
 jobs:
   test:
@@ -13,10 +13,10 @@ jobs:
     steps:
     # Checks-out the repository under $GITHUB_WORKSPACE
     - name: Checkout Git Repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
     
     - name: Set up Node
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v3
       with:
         node-version: '14'
     # Runs a command using the runners shell
