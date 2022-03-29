@@ -13,7 +13,9 @@ function Login(props) {
 
     useEffect(() => {
         api.authenticate((res) => {
-            navigate("/dashboard")
+            if(!res.errors) {
+                navigate("/dashboard")
+            }
         }, (err) => {
             
         })

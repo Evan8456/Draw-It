@@ -25,7 +25,9 @@ export function SoloDraw() {
   useEffect(() => {
 
     api.authenticate((res) => {
-      //pass
+        if(res.errors) {
+          navigate("/")
+        }
       }, (err) => {
           navigate("/")
       })

@@ -24,24 +24,25 @@ export function Draw() {
 
   let navigate = useNavigate();
 
-
   useEffect(() => {
 
     api.authenticate((res) => {
+      if(res.errors) {
+        navigate("/");
+      } else {
+        const socket = io(process.env.REACT_APP_SOCKET,{secure: true})
+        setS(socket);
 
-      const socket = io(process.env.REACT_APP_SOCKET,{secure: true})
-      setS(socket);
-
-      socket.on('drawing', goDraw);
-      socket.on("connect", () =>{
-        console.log(`connected with id :${socket.id}`);
-        socket.emit('join-room',"testRoom");
-        console.log(`socket join room: testRoom`);
-        setR("testRoom");
-      });
-      
+        socket.on('drawing', goDraw);
+        socket.on("connect", () =>{
+          console.log(`connected with id :${socket.id}`);
+          socket.emit('join-room',"testRoom");
+          console.log(`socket join room: testRoom`);
+          setR("testRoom");
+        });
+      }
     }, (err) => {
-        navigate("/")
+      navigate("/");
     })
 
     const canvas = canvasRef.current;
