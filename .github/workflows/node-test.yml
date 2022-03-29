@@ -21,8 +21,10 @@ jobs:
         node-version: '14'
     # Runs a command using the runners shell
     - name: Install dependencies
-      env:
-          PIPENV_YES: "true"
       run: |
+        cd ./paint-me/frontend
+        npm install
+        npm test
+        cd ../backend/
         npm install
         npm test

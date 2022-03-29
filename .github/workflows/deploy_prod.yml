@@ -20,10 +20,10 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Save Secret frontend .env localy
-        run: echo "${{ secrets.PROD_DEPLOY_FRONTEND_ENV_FILE }}" > ${{ github.workspace }}/frontend/.env
+        run: echo "${{ secrets.PROD_DEPLOY_FRONTEND_ENV_FILE }}" > ${{ github.workspace }}/paint-me/frontend/.env
       
       - name: Save Secret backend .env localy
-        run: echo "${{ secrets.PROD_DEPLOY_BACKEND_ENV_FILE }}" > ${{ github.workspace }}/backend/.env
+        run: echo "${{ secrets.PROD_DEPLOY_BACKEND_ENV_FILE }}" > ${{ github.workspace }}/paint-me/backend/.env
 
       
       - name: Stop App on Server frontend
@@ -64,7 +64,7 @@ jobs:
           port: ${{ secrets.PROD_DEPLOY_PORT }}
           username: ${{ secrets.PROD_DEPLOY_USERNAME }}
           envs: PIPENV_YES
-          script: cd ${{ secrets.PROD_DEPLOY_TARGET_PATH_FRONTEND }} && npm install
+          script: cd ${{ secrets.PROD_DEPLOY_FRONTEND_TARGET_PATH }} && npm install
 
       - name: Install dependencies on Server backend
         uses: appleboy/ssh-action@v0.1.4
@@ -76,7 +76,7 @@ jobs:
           port: ${{ secrets.PROD_DEPLOY_PORT }}
           username: ${{ secrets.PROD_DEPLOY_USERNAME }}
           envs: PIPENV_YES
-          script: cd ${{ secrets.PROD_DEPLOY_TARGET_PATH_BACKEND }} && npm install
+          script: cd ${{ secrets.PROD_DEPLOY_BACKEND_TARGET_PATH }} && npm install
 
       - name: Start App on Server frontend
         uses: appleboy/ssh-action@v0.1.4
