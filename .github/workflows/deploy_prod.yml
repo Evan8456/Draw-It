@@ -56,26 +56,20 @@ jobs:
           
       - name: Install dependencies on Server frontend
         uses: appleboy/ssh-action@v0.1.4
-        env:
-          PIPENV_YES: "true"
         with:
           key: ${{ secrets.PROD_DEPLOY_SSH_KEY }}
           host: ${{ secrets.PROD_DEPLOY_HOST }}
           port: ${{ secrets.PROD_DEPLOY_PORT }}
           username: ${{ secrets.PROD_DEPLOY_USERNAME }}
-          envs: PIPENV_YES
           script: cd ${{ secrets.PROD_DEPLOY_FRONTEND_TARGET_PATH }} && npm install
 
       - name: Install dependencies on Server backend
         uses: appleboy/ssh-action@v0.1.4
-        env:
-          PIPENV_YES: "true"
         with:
           key: ${{ secrets.PROD_DEPLOY_SSH_KEY }}
           host: ${{ secrets.PROD_DEPLOY_HOST }}
           port: ${{ secrets.PROD_DEPLOY_PORT }}
           username: ${{ secrets.PROD_DEPLOY_USERNAME }}
-          envs: PIPENV_YES
           script: cd ${{ secrets.PROD_DEPLOY_BACKEND_TARGET_PATH }} && npm install
 
       - name: Start App on Server frontend
