@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import "./Draw.css";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,useLocation } from 'react-router-dom';
 import api from "../../api"
 
 import {io} from 'socket.io-client';
@@ -10,6 +10,9 @@ import { Box, Button, chakra} from "@chakra-ui/react";
 
 
 export function Draw() {
+  const {state} = useLocation();
+  const [title, setTitle] = useState(null);
+  const [collaborators, setCollaborators] = useState(null);
   const canvasRef = useRef();
   const contextRef = useRef();
   const colorRef = useRef();
@@ -32,6 +35,16 @@ export function Draw() {
       } else {
         const socket = io(process.env.REACT_APP_SOCKET,{secure: true})
         setS(socket);
+        
+        if(state.roomCode !== null){
+          socket.on('drawing', goDraw);
+          socket.on("connect", () =>{
+            console.log(`connected with id :${socket.id}`);
+            socket.emit('join-room',state.roomCode);
+            console.log(`socket join room: ${state.roomCode}`);
+            setR(state.roomCode);
+          });
+        }else{
 
         socket.on('drawing', goDraw);
         socket.on("connect", () =>{
@@ -41,14 +54,16 @@ export function Draw() {
           setR("testRoom");
         });
       }
+      }
     }, (err) => {
       navigate("/");
     })
-
+    setCollaborators(state.collaborators);
+    setTitle(state.title);
     const canvas = canvasRef.current;
     canvas.width = 600 * 2;
     canvas.height = 600 * 2;
-
+    
     const context = canvas.getContext("2d");
     context.fillStyle = "white";
     context.fillRect(0, 0, canvas.width, canvas.height);
@@ -185,6 +200,7 @@ export function Draw() {
     
       
       <Navbar page="dashboard"/>
+      <div>{title}</div>
       <div className="draw">
         <canvas
           className="test"
