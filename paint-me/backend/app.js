@@ -119,7 +119,7 @@ if(process.env.ENVIRONMENT == "dev") {
   }
   start();
   httpServer.listen(3002, () => {
-    console.log("Websocket started at port ", 3002)
+    console.log("Websocket started at port test ", 3002)
   });
 } else {
   var privateKey  = fs.readFileSync('/etc/letsencrypt/live/draw-it.me/privkey.pem');
@@ -180,7 +180,7 @@ if(process.env.ENVIRONMENT == "dev") {
   start();
 
   httpsServer.listen(3002, () => {
-    console.log("Websocket started at port ", 3002)
+    console.log("Websocket started at port test server", 3002)
   });
 }
 

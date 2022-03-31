@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 
 import "./SoloDraw.css";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,useLocation } from 'react-router-dom';
 import api from "../../api"
 import Navbar from "../Navbar/Navbar";
 import { FaPlus } from 'react-icons/fa';
@@ -9,11 +9,13 @@ import { Box, Button, chakra} from "@chakra-ui/react";
 
 
 export function SoloDraw() {
+  const {state} = useLocation();
   let CFaPlus = chakra(FaPlus);
   const canvasRef = useRef();
   const contextRef = useRef();
   const colorRef = useRef();
   const importImg = useRef();
+  const [title, setTitle] = useState(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [img, setImg] = useState(null);
   const [thickness, setThick] = useState(null);
@@ -31,8 +33,7 @@ export function SoloDraw() {
       }, (err) => {
           navigate("/")
       })
-	
-	  
+    setTitle(state.title);
     const canvas = canvasRef.current;
     canvas.width = 600 * 2;
     canvas.height = 600 * 2;
@@ -133,8 +134,9 @@ export function SoloDraw() {
   return (
     <>
    
-      <Navbar page="dashboard"/>  
+      <Navbar page="draw"/>  
       <div className="solo-draw">
+        <div>{title}</div>
       <input type="file" ref={importImg} onChange={() => addImg()}  accept="image/png, image/jpeg"/>
       
        <Box as="button" 
