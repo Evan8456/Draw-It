@@ -56,6 +56,14 @@ function NavBar(props) {
       }
     }
 
+    function signOut() {
+      api.signout((res) => {
+          navigate("/")
+      }, (err) => {
+          console.log(err);
+      })
+    }
+
     let CFaPlus = chakra(FaPlus);
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { isOpen: isCollabOpen , onOpen: onCollabOpen, onClose: onCollabClose }  = useDisclosure();
@@ -79,13 +87,7 @@ function NavBar(props) {
         button = <Button onClick={() => changePage()}>{text}</Button>
     } else if (props.page === "dashboard") {
 
-        function signOut() {
-            api.signout((res) => {
-                navigate("/")
-            }, (err) => {
-                console.log(err);
-            })
-        }
+      
         button = 
         <Flex flexDirection="row">
 
@@ -242,6 +244,8 @@ function NavBar(props) {
 
             <Button onClick={() => signOut()} marginLeft="3">Sign Out</Button>
         </Flex>
+    }else if(props.page === "draw"){
+      button= <Button onClick={() => signOut()}>Sign Out</Button>
     }
 
     return (

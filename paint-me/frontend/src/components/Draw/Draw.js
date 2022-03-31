@@ -199,7 +199,7 @@ export function Draw() {
     <>
     
       
-      <Navbar page="dashboard"/>
+      <Navbar page="draw"/>
       <div>{title}</div>
       <div className="draw">
         <canvas
