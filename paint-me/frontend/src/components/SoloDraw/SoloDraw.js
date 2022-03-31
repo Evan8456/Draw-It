@@ -134,7 +134,7 @@ export function SoloDraw() {
   return (
     <>
    
-      <Navbar page="dashboard"/>  
+      <Navbar page="draw"/>  
       <div className="solo-draw">
         <div>{title}</div>
       <input type="file" ref={importImg} onChange={() => addImg()}  accept="image/png, image/jpeg"/>
