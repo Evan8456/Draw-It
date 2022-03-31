@@ -20,14 +20,14 @@ import {
 
 function NavBar(props) {
     let text = ""
-    if(props.type == "login") {
+    if(props.type === "login") {
         text = "Get Started"
     } else {
         text = "Login Now";
     }
 
     const changePage = () => {
-        if(props.type == "login") {
+        if(props.type === "login") {
             props.dispatchPage("register");
         } else {
             props.dispatchPage("login");
@@ -36,16 +36,24 @@ function NavBar(props) {
 
     const createDraw = (title,collab ) => {
         console.log("Creating canvas");
-        navigate("/Draw", { state: {  title: title, collaborators: collab, roomCode:null } });
+        if(title !== "" && collab !== ""){
+          navigate("/Draw", { state: {  title: title, collaborators: collab, roomCode:null } });
+        }
+        
     }
 
     const joinRoom = (roomCode) => {
         // api check to see room exists
-        navigate("/Draw", { state: {  title: null, collaborators: null, roomCode:roomCode } });
+        if(roomCode !== ""){
+          navigate("/Draw", { state: {  title: null, collaborators: null, roomCode:roomCode } });
+        }
+        
     }
 
     const createSoloDraw = (data) => {
+      if(data!== ""){
         navigate("/SoloDraw", { state: {  title: data } });
+      }
     }
 
     let CFaPlus = chakra(FaPlus);
@@ -67,9 +75,9 @@ function NavBar(props) {
   
     let button;
     let navigate = useNavigate()
-    if(props.page == "landing") {
+    if(props.page === "landing") {
         button = <Button onClick={() => changePage()}>{text}</Button>
-    } else if (props.page == "dashboard") {
+    } else if (props.page === "dashboard") {
 
         function signOut() {
             api.signout((res) => {
