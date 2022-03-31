@@ -15,7 +15,9 @@ const typeDefs=gql`
     type Mutation {
         signup(username:String!, password:String!): String
         signin(username:String!, password:String!): String
-        addPrivateDrawing(name:String!): String
+        addDrawing(name:String!, public:Boolean!): String
+        findRoom(_id:String!): Boolean
+        loadImage(_id:String!): Boolean
     }
     type Query{
         users: [User!]!
@@ -23,6 +25,7 @@ const typeDefs=gql`
         authenticate: String
         privateDrawings: [Picture]
         sharedDrawings: [Picture]
+        publicDrawings: [Picture]
     }
 `;
 

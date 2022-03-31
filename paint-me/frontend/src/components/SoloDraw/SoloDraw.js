@@ -9,7 +9,6 @@ import { Box, Button, chakra} from "@chakra-ui/react";
 
 
 export function SoloDraw() {
-  const {state} = useLocation();
   let CFaPlus = chakra(FaPlus);
   const canvasRef = useRef();
   const contextRef = useRef();
@@ -21,8 +20,11 @@ export function SoloDraw() {
   const [thickness, setThick] = useState(null);
   const [startX, setStartX] = useState(null);
   const [startY, setStartY] = useState(null);
+  
   let navigate = useNavigate();
-
+  const { state } = useLocation();
+  console.log(state)
+  const { id, load } = state;
 
   useEffect(() => {
 
@@ -46,8 +48,15 @@ export function SoloDraw() {
 	  context.fillStyle = "white";
     context.fillRect(0, 0, canvas.width, canvas.height);
     contextRef.current = context;
-	
 
+    if(load != "") {
+      var image =new Image()
+      image.onload = () => {
+        canvasRef.current.getContext("2d").drawImage(image,0,0,image.width,image.height,0,0,600,600);;
+      }
+      if(process.env.REACT_APP_ENVIRONMENT) image.crossOrigin = "use-credentials";
+      image.src =  process.env.REACT_APP_BACKEND + "/api/drawing/" + id;
+    }
 
   }, []);
 
@@ -91,6 +100,18 @@ export function SoloDraw() {
      const context = canvas.getContext("2d");
     context.clearRect(0, 0, canvas.width, canvas.height);
    }
+
+   function saveImage() {
+    const canvas = canvasRef.current;
+    canvas.toBlob((url) => {
+      if(url) {
+        api.saveImage(id, url, (res) => {
+        }, (err) => {
+          console.log(err)
+        })
+      }
+    })
+  }
 
   function addImg(){
     if(!importImg.current.files[0]){
@@ -240,6 +261,25 @@ export function SoloDraw() {
             width='75px'
             _hover={{ bg: 'red.100' }}>
                Eraser
+          </Box>
+
+          <Box as="button" 
+            onClick={() => saveImage()} 
+            rounded="2xl" 
+            bg="red.50" 
+            boxShadow="md" 
+            height='35px'
+            lineHeight='1.2'
+            transition='all 0.2s cubic-bezier(.08,.52,.52,1)'
+            border='1px'
+            px='8px'
+            fontSize='14px'
+            fontWeight='semibold'
+            borderColor='#ccd0d5'
+            className="tools"
+            width='75px'
+            _hover={{ bg: 'red.100' }}>
+               Save
           </Box>
 
 	   

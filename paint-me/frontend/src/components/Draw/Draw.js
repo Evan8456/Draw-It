@@ -12,7 +12,6 @@ import { Box, Alert, AlertIcon} from "@chakra-ui/react";
 
 
 export function Draw() {
-  const {state} = useLocation();
   const [title, setTitle] = useState(null);
   const [collaborators, setCollaborators] = useState(null);
   const canvasRef = useRef();
@@ -42,13 +41,13 @@ export function Draw() {
         const socket = io(process.env.REACT_APP_SOCKET,{secure: true})
         setS(socket);
         
-        if(state.roomCode !== null){
+        if(state.id !== null){
           socket.on('drawing', goDraw);
           socket.on("connect", () =>{
             console.log(`connected with id :${socket.id}`);
-            socket.emit('join-room',state.roomCode);
-            console.log(`socket join room: ${state.roomCode}`);
-            setR(state.roomCode);
+            socket.emit('join-room',state.id);
+            console.log(`socket join room: ${state.id}`);
+            setR(state.id);
           });
         }else{
 
@@ -84,11 +83,12 @@ export function Draw() {
 
 
     console.log(load);
-    if(load) {
+    if(load != "") {
       var image =new Image()
       image.onload = () => {
         canvasRef.current.getContext("2d").drawImage(image,0,0,image.width,image.height,0,0,600,600);;
       }
+      if(process.env.REACT_APP_ENVIRONMENT) image.crossOrigin = "use-credentials";
       image.src =  process.env.REACT_APP_BACKEND + "/api/drawing/" + id;
     }
 

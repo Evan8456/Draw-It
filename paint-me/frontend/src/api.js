@@ -96,6 +96,22 @@ module.getPrivateDrawings = function(callback, errCallback) {
     })
 }
 
+module.getPublicDrawings = function(callback, errCallback) {
+    let data = {
+        query: `query {
+            publicDrawings {
+                name,
+                _id,
+                path
+            }
+        }`,
+    }
+    sendGQL(data, (err, res) => {
+        if(err) errCallback(err, res)
+        callback(res)
+    })
+}
+
 module.saveImage = function(_id, image, callback, callbackerr) {
     let formdata = new FormData();
     formdata.append("_id", _id);
@@ -111,6 +127,45 @@ module.getImage = function(_id, callback, callbackerr) {
     send("GET", "/api/drawing/"+_id, null, false, function(err, res) {
         if(err) return callbackerr(err)
         callback(res);
+    })
+}
+
+module.addDrawing = function(name, publicBool, callback, errCallback) {
+    let data = {
+        query: `mutation ($name: String!, $public: Boolean!){
+            addDrawing(name: $name, public: $public)
+        }`,
+        variables: {name, public:publicBool}
+    }
+    sendGQL(data, (err, res) => {
+        if(err) errCallback(err, res)
+        callback(res)
+    })
+}
+
+module.checkRoom = function(_id, callback, errCallback) {
+    let data = {
+        query: `mutation ($_id: String!){
+            findRoom(_id: $_id)
+        }`,
+        variables: {_id}
+    }
+    sendGQL(data, (err, res) => {
+        if(err) errCallback(err, res)
+        callback(res)
+    })
+}
+
+module.checkLoad = function(_id, callback, errCallback) {
+    let data = {
+        query: `mutation ($_id: String!){
+            loadImage(_id: $_id)
+        }`,
+        variables: {_id}
+    }
+    sendGQL(data, (err, res) => {
+        if(err) errCallback(err, res)
+        callback(res)
     })
 }
 
