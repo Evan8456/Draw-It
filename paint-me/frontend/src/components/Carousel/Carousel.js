@@ -1,6 +1,6 @@
 import { Flex, chakra, IconButton } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
-import drawing from "../../assets/draw.jpeg"
+import drawing from "../../assets/new.png"
 import { AiOutlineDoubleLeft, AiOutlineDoubleRight } from "react-icons/ai";
 import CarouselCard from "./CarouselCard";
 
@@ -13,6 +13,7 @@ export default function Carousel(props) {
     const [right, setRight] = useState("");
 
     useEffect(() => {
+        console.log(page)
         if(page == 0) {
             setLeft("")
         } else {
@@ -26,21 +27,27 @@ export default function Carousel(props) {
             setRight("")
         }
 
-    }, [page, num]);
-
-    useEffect(() => {
         if(page*num < props.items.length) {
             let card = []
+            let w = "22%"
+            if(num == 2) {
+                w = "47%"
+            }
+
             for(let i = page*num; i <Math.min((page+1)*num, props.items.length); i++) {
-                if(num == 4) {
-                    card.push(<CarouselCard title={props.items[i].name} image={props.items[i].drawing} key={i} width="22%"/>)
-                } else if(num == 2) {
-                    card.push(<CarouselCard title={props.items[i].name} image={props.items[i].drawing} key={i} width="47%"/>)
+                let path = props.items[i].path;
+
+                if(path == "") {
+                    path = drawing
+                } else {
+                    path = process.env.REACT_APP_BACKEND + "/api/drawing/" + props.items[i]._id
                 }
+
+                card.push(<CarouselCard title={props.items[i].name} image={path} _id={props.items[i]._id} key={props.items[i]._id} width={w} path={props.items[i].path}/>)
             }
             setCards(card)
         }
-    }, [page, num]);
+    }, [page, num, props.items]);
 
     useEffect(() => {
         if(window.innerWidth > 600) {

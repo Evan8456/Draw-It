@@ -80,4 +80,38 @@ module.authenticate = function(callback, errCallback) {
     })
 }
 
+module.getPrivateDrawings = function(callback, errCallback) {
+    let data = {
+        query: `query {
+            privateDrawings {
+                name,
+                _id,
+                path
+            }
+        }`,
+    }
+    sendGQL(data, (err, res) => {
+        if(err) errCallback(err, res)
+        callback(res)
+    })
+}
+
+module.saveImage = function(_id, image, callback, callbackerr) {
+    let formdata = new FormData();
+    formdata.append("_id", _id);
+    formdata.append("image", image);
+
+    send("POST", "/api/drawing", formdata, false, function(err, res) {
+        if(err) return callbackerr(err)
+        callback(res);
+    })
+}
+
+module.getImage = function(_id, callback, callbackerr) {
+    send("GET", "/api/drawing/"+_id, null, false, function(err, res) {
+        if(err) return callbackerr(err)
+        callback(res);
+    })
+}
+
 export default module;

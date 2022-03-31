@@ -6,7 +6,7 @@ import reportWebVitals from './reportWebVitals';
 import {Provider} from 'react-redux';
 import {createStore, combineReducers} from 'redux';
 import { ChakraProvider } from '@chakra-ui/react';
-import drawing from "./assets/draw.jpeg"
+import drawing from "./assets/new.png"
 
 const initial = {page: "login"};
 
@@ -21,13 +21,17 @@ const logInReducer = (state=initial, action) => {
 };
 
 const startState = {
-  private: [{name:"Title", drawing: drawing}, {name:"Title", drawing: drawing}, {name:"Title", drawing: drawing}],
-  public: [{name:"Title", drawing: drawing}, {name:"Title", drawing: drawing}, {name:"Title", drawing: drawing}, {name:"Title", drawing: drawing}, {name:"Title", drawing: drawing}, {name:"Title", drawing: drawing}, {name:"Title", drawing: drawing}, {name:"Title", drawing: drawing}, {name:"Title", drawing: drawing}]
+  private: [],
+  public: [{name:"Title", path: "", _id:4}, {name:"Title", path: "", _id:5}, {name:"Title", path: "", _id:6}, {name:"Title", path: "", _id:7}, {name:"Title", path: "", _id:8}, {name:"Title", path: "", _id:9}, {name:"Title", path: "", _id:10}, {name:"Title", path: "", _id:11}, {name:"Title", path: "", _id:12}]
 }
 
 const dashboardReducer = (state=startState, action) => {
   let temp;
   switch(action.type) {
+    case "updatePrivate":
+      temp = {...state};
+      temp.private = action.payload
+      return temp;
     case "addPrivate":
       temp = {...state}
       temp.private = temp.private + action.payload
