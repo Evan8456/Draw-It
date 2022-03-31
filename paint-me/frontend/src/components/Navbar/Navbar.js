@@ -15,7 +15,9 @@ import {
     FormControl,
     FormLabel,
     Input,
-    useDisclosure 
+    useDisclosure,
+    Select,
+    Radio, RadioGroup
 } from '@chakra-ui/react'
 
 function NavBar(props) {
@@ -36,8 +38,10 @@ function NavBar(props) {
 
     const createDraw = (title,collab ) => {
         console.log("Creating canvas");
-        if(title !== "" && collab !== ""){
-          navigate("/Draw", { state: {  title: title, collaborators: collab, roomCode:null } });
+        if(title !== "" && collab === "Public"){
+          navigate("/Draw", { state: {  title: title, collaborators: null, roomCode:null } });
+        }else if(title !== "" && collab === "Private"){
+          navigate("/SoloDraw", { state: {  title: title } });
         }
         
     }
@@ -48,12 +52,6 @@ function NavBar(props) {
           navigate("/Draw", { state: {  title: null, collaborators: null, roomCode:roomCode } });
         }
         
-    }
-
-    const createSoloDraw = (data) => {
-      if(data!== ""){
-        navigate("/SoloDraw", { state: {  title: data } });
-      }
     }
 
     function signOut() {
@@ -86,61 +84,10 @@ function NavBar(props) {
     if(props.page === "landing") {
         button = <Button onClick={() => changePage()}>{text}</Button>
     } else if (props.page === "dashboard") {
-
+        
       
         button = 
         <Flex flexDirection="row">
-
-            <Box as="button" 
-            onClick={() => onOpen()} 
-            rounded="2xl" 
-            bg="cyan.50" 
-            boxShadow="md" 
-            height='40px'
-            lineHeight='1.2'
-            transition='all 0.2s cubic-bezier(.08,.52,.52,1)'
-            border='1px'
-            px='8px'
-            fontSize='14px'
-            fontWeight='semibold'
-            borderColor='#ccd0d5'
-            color='#4b4f56'
-            display="flex"
-            flexDirection="row"
-            alignItems="center"
-
-            _hover={{ bg: 'cyan.100' }}>
-                <CFaPlus color="teal"/>&nbsp;Create Solo
-            </Box>
-            <Modal
-          initialFocusRef={initialRef}
-          finalFocusRef={finalRef}
-          isOpen={isOpen}
-          onClose={onClose}
-        >
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>Create your Art</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody pb={6}>
-              <FormControl>
-                <FormLabel>Title</FormLabel>
-                <Input ref={initialRef} placeholder='Title' />
-              </FormControl>
-  
-           
-            </ModalBody>
-  
-            <ModalFooter>
-              <Button onClick={()=> createSoloDraw(initialRef.current.value)}colorScheme='blue' mr={3}>
-                Create
-              </Button>
-              <Button onClick={onClose}>Cancel</Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
-
-
             <Box as="button"  marginLeft="3"    
             onClick={() => onCollabOpen()} 
             rounded="2xl" 
@@ -178,8 +125,12 @@ function NavBar(props) {
                 <Input ref={initialRef2} placeholder='Title' />
               </FormControl>
               <FormControl>
-                <FormLabel>collaborators</FormLabel>
-                <Input ref={collab} placeholder='Collaborators' />
+                <FormLabel>Room Type</FormLabel>
+                <Select ref={collab} placeholder='Select option'>
+                   <option value='Public'>Public</option>
+                   <option value='Private'>Private</option>
+                  
+                </Select>
               </FormControl>
   
            
