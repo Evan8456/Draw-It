@@ -1,10 +1,9 @@
 const mongoose = require('mongoose');
 
 const RoomSchema = new mongoose.Schema({
-    roomName: {type: String, required:true},
-    userLimit: {type: Number, required:true, default:5},
-    salt: {type: String, required:true},
-    dateCreated: {type: Date, default:Date.now}
+    picture: {type: String, required:true},
+    shared: [{type: String, required:true}],
+    name: {type: String, required:true}
 })
 
 const model = mongoose.model('RoomModel', RoomSchema);

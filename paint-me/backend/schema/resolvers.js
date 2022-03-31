@@ -1,6 +1,7 @@
 const {gql, AuthenticationError, UserInputError} = require("apollo-server-express");
 const bcrypt = require('bcrypt');
 const userModel = require('../models/user');
+const privateDrawings = require("../models/privateDrawing");
 const cookie = require('cookie');
 const validator = require('validator');
 const saltRounds = 10;
@@ -24,6 +25,15 @@ const resolvers = {
             } else {
                 throw new AuthenticationError();
             }
+        },
+
+        privateDrawings: async (_, data, {req, res}) => {
+            if(!req.session.username) {
+                throw new AuthenticationError();
+            }
+
+            const drawings = privateDrawings.find({username: req.session.username}).exec()
+            return drawings;
         }
     },
 
@@ -87,7 +97,23 @@ const resolvers = {
             } catch (err) {
                 return new UserInputError("Invalid input");
             }
+        },
+
+        addPrivateDrawing: async (_, data, {req, res}) => {
+            if(!req.session.username) {
+                throw new AuthenticationError()
+            }
+
+            const name = data.name;
+            const username = req.session.username;
+            const path = "";
+            const public = false;
+
+            const t = await privateDrawings.insertMany({name, username, path, public})
+
+            return "success";
         }
+
     }
 }
 
