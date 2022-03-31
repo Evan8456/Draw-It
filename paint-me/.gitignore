@@ -6,6 +6,7 @@
 /frontend/node_modules
 /.pnp
 .pnp.js
+uploads
 
 # testing
 /coverage
@@ -23,3 +24,6 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+/backend/uploads
+uploads

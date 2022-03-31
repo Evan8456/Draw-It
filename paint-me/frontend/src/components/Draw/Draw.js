@@ -1,12 +1,14 @@
 import React, { useState, useRef, useEffect } from "react";
 import "./Draw.css";
-import { useNavigate,useLocation } from 'react-router-dom';
+
+import { useLocation, useNavigate } from 'react-router-dom';
+
 import api from "../../api"
 
 import {io} from 'socket.io-client';
 
 import Navbar from "../Navbar/Navbar";
-import { Box, Button, chakra} from "@chakra-ui/react";
+import { Box, Alert, AlertIcon} from "@chakra-ui/react";
 
 
 export function Draw() {
@@ -22,13 +24,17 @@ export function Draw() {
   const [startX, setStartX] = useState(null);
   const [startY, setStartY] = useState(null);
   const [s, setS] = useState(null);
+  const [variant, setVariant] = useState('success');
+  const [display, setDisplay] = useState('none');
+  const [text, setText] = useState('Successfully Saved');
 
   const [room, setR] = useState(null);
 
   let navigate = useNavigate();
+  const { state } = useLocation();
+  const { id, load } = state;
 
   useEffect(() => {
-
     api.authenticate((res) => {
       if(res.errors) {
         navigate("/");
@@ -77,6 +83,15 @@ export function Draw() {
     contextRef.current = context;
 
 
+    console.log(load);
+    if(load) {
+      var image =new Image()
+      image.onload = () => {
+        canvasRef.current.getContext("2d").drawImage(image,0,0,image.width,image.height,0,0,600,600);;
+      }
+      image.src =  process.env.REACT_APP_BACKEND + "/api/drawing/" + id;
+    }
+
   }, []);
 
   function goDraw(data){
@@ -111,6 +126,27 @@ export function Draw() {
     const canvas = canvasRef.current;
     const context = canvas.getContext('2d');
     context.clearRect(0, 0, canvas.width, canvas.height);
+  }
+
+  function saveImage() {
+    const canvas = canvasRef.current;
+    canvas.toBlob((url) => {
+      if(url) {
+        api.saveImage(id, url, (res) => {
+          setVariant("success")
+          setDisplay("flex")
+          setText("Successfully Saved")
+    
+          const time = setTimeout(setDisplay("none"), 3000)
+        }, (err) => {
+          setVariant("failure")
+          setDisplay("flex")
+          setText("Coiuld not save Image")
+    
+          const time = setTimeout(setDisplay("none"), 3000)
+        })
+      }
+    })
   }
 
   const changeColor = (color) => {
@@ -197,10 +233,9 @@ export function Draw() {
 
   return (
     <>
-    
-      
       <Navbar page="draw"/>
       <div>{title}</div>
+
       <div className="draw">
         <canvas
           className="test"
@@ -260,6 +295,25 @@ export function Draw() {
             width='75px'
             _hover={{ bg: 'red.100' }}>
                Eraser
+          </Box>
+
+          <Box as="button" 
+            onClick={() => saveImage()} 
+            rounded="2xl" 
+            bg="red.50" 
+            boxShadow="md" 
+            height='35px'
+            lineHeight='1.2'
+            transition='all 0.2s cubic-bezier(.08,.52,.52,1)'
+            border='1px'
+            px='8px'
+            fontSize='14px'
+            fontWeight='semibold'
+            borderColor='#ccd0d5'
+            className="tools"
+            width='75px'
+            _hover={{ bg: 'red.100' }}>
+               Save
           </Box>
 
         <button onClick={() => joinRoom1()}>Test Room 1</button>

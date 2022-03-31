@@ -6,12 +6,15 @@ const messageModel = require('./models/message');
 const userModel = require('./models/user');
 const roomModel = require('./models/room');
 const pictureModel = require('./models/picture');
+const drawingModel = require('./models/privateDrawing');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const fs = require('fs');
 const {typeDefs} = require("./schema/type-defs");
 const {resolvers} = require("./schema/resolvers");
 const cors = require('cors')
+const multer = require('multer');
+
 mongoose.connect(process.env.MONGODB_CONNECTION);
 
 mongoose.connection.once('open', function() { 
@@ -25,11 +28,28 @@ mongoose.connection.on('error', function(error) {
 const app = express();
 const router = express.Router();
 
+if(!fs.existsSync("./uploads")) {
+  fs.mkdirSync("./uploads");
+}
+
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 const cookie = require('cookie');
 var sharedsession = require("express-socket.io-session");
+
+let storage = multer.diskStorage({
+  destination: function(req, file, cb) {
+      cb(null, "./uploads");
+  },
+
+  filename: function(req, file, cb) {
+      let extension = file.mimetype.split("/")[1];
+      console.log(req.body);
+      cb(null, req.body._id + "." + extension);
+  }
+});
+let upload = multer({storage});
 
 var corsOptions = {
   origin:['http://localhost:3000', 'https://studio.apollographql.com'],
@@ -82,6 +102,7 @@ if(process.env.ENVIRONMENT == "dev") {
         console.log(element);
         socket.leave(element);
       });
+
       socket.join(room);
       console.log(socket.rooms);
     })
@@ -175,76 +196,40 @@ app.use(function (req, res, next){
   console.log("HTTP request", req.username, req.method, req.url, req.body);
   next();
 });
-app.get('/signout/',  isAuthenticated,function (req, res, next) {
-    req.session.destroy();
-    res.setHeader('Set-Cookie', cookie.serialize('username', '', {
-          path : '/', 
-          maxAge: 60 * 60 * 24 * 7,		  // 1 week in number of seconds
-	  }));
-    console.log(req.session)
-    return res.json({});
-    
-});
-app.post('/signup/',  function (req, res, next) {
-  console.log("test");
-  var username = req.body.username;
-  var password = req.body.password;
-  bcrypt.hash(password, saltRounds, function(err, hash) {
-    // Store the salted hash in the database
+
+app.post("/api/drawing", isAuthenticated, upload.single("image"), function(req, res, next) {
+  console.log(req.body)
+  const _id = req.body._id
+
+  drawingModel.findById(_id, function(err, doc) {
     if (err) return res.status(500).end(err);
-        password = hash;
-        userModel.findOne({username: username}, function(err, user){
-            if (err) return res.status(500).end(err);
-            if (user) return res.status(409).end("username " + username + " already exists");
-            userModel.insertMany({ username:username,hashPassword: hash, salt: saltRounds}, function(err, result){
-                if (err) return res.status(500).end(err);
-                // initialize cookie
-                // gets the update entry returned from callback
-                req.session.username = username;
-                res.setHeader('Set-Cookie', cookie.serialize('username', username, {
-                      path : '/', 
-                      maxAge: 60 * 60 * 24 * 7
-                }));
-                return res.json(username);
-            });
-        });
+    if (!doc) return res.status(404).send();
+    if (!doc.public && doc.username != req.session.username) return res.status(401).send();
 
-    });
+    console.log(req.body._id)
+    doc.path = req.file;
+    doc.save();
+    res.json(doc);
+    next();
+  })
 });
-app.post('/signin/',  function (req, res, next) {
-   
-  var username = req.body.username;
-    var password = req.body.password;
-    // retrieve user from the database
-    userModel.findOne({username: username}, function(err, user){
-        if (err) return res.status(500).end(err);
-        if (!user) return res.status(401).end("access denied");
-        bcrypt.compare(password, user.hashPassword, function(err, result) {
-            if (err) return res.status(500).end(err);
-            if(!result){
-                return res.status(401).end("access denied"); 
-            }
-            // initialize cookie
-            req.session.username = username;
-            res.setHeader('Set-Cookie', cookie.serialize('username', username, {
-                path : '/', 
-                maxAge: 60 * 60 * 24 * 7
-            }));
-            return res.json({username});
-        });
 
-        
-    });
+app.get("/api/drawing/:id", isAuthenticated, function(req, res, next) {
+  const _id = req.params.id
+
+  drawingModel.findById(_id, function(err, doc) {
+    if (err) return res.status(500).end(err);
+    if (!doc) return res.status(404).send();
+    if (!doc.public && doc.username != req.session.username) return res.status(401).send();
+  
+    let image = doc.path;
+    res.setHeader('Content-Type', image.mimetype);
+    console.log(__dirname + "/" + image.path);
+    res.sendFile(__dirname + "/" + image.path);
+  });
 });
-app.get('/authenticate/', function(req, res, next){
-  console.log("authenticate session")
-  console.log(req.session)
-  if(req.session.username) {
-    return res.status(200).send({status:"success"});
-  } else {
-    return res.status(401).send({status:"failure"});
-  }
-});
+
+
 
 
 
