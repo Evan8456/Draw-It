@@ -118,7 +118,7 @@ const resolvers = {
             const path = "";
             const public = data.public;
 
-            const t = await drawings.insertMany({name, username, path, public})
+            const t = await drawings.insertMany({name, username:[username], path, public})
 
             return t[0]._id
         },
@@ -129,7 +129,6 @@ const resolvers = {
             }
 
             const drawing = await drawings.find({_id: data._id, public:true}).exec()
-
             if(drawing.length > 0) {
                 return true;
             } else {
@@ -145,6 +144,7 @@ const resolvers = {
             const drawing = await drawings.find({_id: data._id, public:true}).exec()
 
             if(drawing.length > 0 && drawing[0].path != "") {
+                const x = await drawings.updateOne({_id: data._id, public:true}, {$push: {username:req.session.username}}).exec()
                 return true;
             } else {
                 return false;
