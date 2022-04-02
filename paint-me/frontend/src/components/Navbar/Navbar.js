@@ -57,7 +57,7 @@ function NavBar(props) {
           api.checkRoom(roomCode, (res) => {
             if(res.data.findRoom) {
               api.checkLoad(roomCode, (res) => {
-                  navigate("/Draw", {state: {id: roomCode, load:res.data.checkLoad}})
+                  navigate("/Draw", {state: {id: roomCode, load:res.data.loadImage}})
               })
             }
           }, err => {
