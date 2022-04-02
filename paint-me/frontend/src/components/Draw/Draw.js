@@ -9,7 +9,7 @@ import {io} from 'socket.io-client';
 
 import Navbar from "../Navbar/Navbar";
 import { Box, Alert, AlertIcon} from "@chakra-ui/react";
-import {socket} from "./socket";
+// import {socket} from "./socket";
 
 export function Draw() {
   const [title, setTitle] = useState(null);
@@ -25,6 +25,7 @@ export function Draw() {
   const [variant, setVariant] = useState('success');
   const [display, setDisplay] = useState('none');
   const [text, setText] = useState('Successfully Saved');
+  const [s, setSocket] = useState(null);
 
   //const [room, setR] = useState(null);
 
@@ -33,12 +34,18 @@ export function Draw() {
   const { id, load } = state;
 
   useEffect(() => {
+    const socket = io(process.env.REACT_APP_SOCKET,{secure: true});
+    setSocket(socket);
     api.authenticate((res) => {
       if(res.errors) {
         navigate("/");
       } else {
+        
+        
+        console.log(socket);
         if(state.id !== null){
           socket.on('drawing', goDraw);
+          console.log("sup");
           socket.on("connect", () =>{
             console.log(`connected with id :${socket.id}`);
             socket.emit('join-room',state.id);
@@ -49,7 +56,7 @@ export function Draw() {
             console.log("trying to saving image")
             if(socket.id !== sid){
               console.log("saving image")
-              saveImage();
+              saveImage(socket);
             }
             
           })
@@ -92,7 +99,7 @@ export function Draw() {
       if(process.env.REACT_APP_ENVIRONMENT) image.crossOrigin = "use-credentials";
       image.src =  process.env.REACT_APP_BACKEND + "/api/drawing/" + id + "?" + new Date().getTime();
     }
-
+    return () => socket.disconnect();
   }, []);
 
   function loadImage(){
@@ -127,7 +134,7 @@ export function Draw() {
     context.clearRect(0, 0, canvas.width, canvas.height);
   }
 
-  function saveImage() {
+  function saveImage(socket) {
     console.log("SAVING IMAGE RIGHT NOW")
     const canvas = canvasRef.current;
     //console.log(canvas);
@@ -135,11 +142,14 @@ export function Draw() {
       //console.log(url);
       if(url) {
         api.saveImage(state.id, url, (res) => {
+          
           setVariant("success")
           setDisplay("flex")
           setText("Successfully Saved")
           //const time = setTimeout(setDisplay("none"), 3000)
           console.log("PROMISE FURFILLED");
+          console.log(state);
+          console.log(socket);
           socket.emit('load-image-bk',state.id, socket.id);
         }, (err) => {
           setVariant("failure")
@@ -222,7 +232,7 @@ export function Draw() {
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");
 
-    socket.emit('drawing', {
+    s.emit('drawing', {
       x0: startX,
       y0: startY,
       x1: offsetX,
@@ -301,7 +311,7 @@ export function Draw() {
           </Box>
 
           <Box as="button" 
-            onClick={() => saveImage()} 
+            onClick={() => saveImage(s)} 
             rounded="2xl" 
             bg="red.50" 
             boxShadow="md" 
