@@ -39,17 +39,30 @@ function NavBar(props) {
     const createDraw = (title,collab ) => {
         console.log("Creating canvas");
         if(title !== "" && collab === "Public"){
-          navigate("/Draw", { state: {  title: title, collaborators: null, roomCode:null } });
+          api.addDrawing(title, true, (res) => {
+            navigate("/Draw", { state: {  id: res.data.addDrawing, load: false } });
+          })
         }else if(title !== "" && collab === "Private"){
-          navigate("/SoloDraw", { state: {  title: title } });
+          api.addDrawing(title, false, (res) => {
+            navigate("/SoloDraw", { state: {  id: res.data.addDrawing, load: false } });
+          })
         }
         
     }
 
     const joinRoom = (roomCode) => {
         // api check to see room exists
+
         if(roomCode !== ""){
-          navigate("/Draw", { state: {  title: null, collaborators: null, roomCode:roomCode } });
+          api.checkRoom(roomCode, (res) => {
+            if(res.data.findRoom) {
+              api.checkLoad(roomCode, (res) => {
+                  navigate("/Draw", {state: {id: roomCode, load:res.data.loadImage}})
+              })
+            }
+          }, err => {
+            console.log(err)
+          })
         }
         
     }

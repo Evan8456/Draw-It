@@ -1,7 +1,7 @@
 const {gql, AuthenticationError, UserInputError} = require("apollo-server-express");
 const bcrypt = require('bcrypt');
 const userModel = require('../models/user');
-const privateDrawings = require("../models/privateDrawing");
+const drawings = require("../models/privateDrawing");
 const cookie = require('cookie');
 const validator = require('validator');
 const saltRounds = 10;
@@ -32,9 +32,18 @@ const resolvers = {
                 throw new AuthenticationError();
             }
 
-            const drawings = privateDrawings.find({username: req.session.username}).exec()
-            return drawings;
-        }
+            const drawing = drawings.find({username: req.session.username, public:false}).exec()
+            return drawing;
+        },
+
+        publicDrawings: async (_, data, {req, res}) => {
+            if(!req.session.username) {
+                throw new AuthenticationError();
+            }
+
+            const drawing = drawings.find({username: req.session.username, public:true}).exec()
+            return drawing;
+        },
     },
 
     Mutation: {
@@ -99,7 +108,7 @@ const resolvers = {
             }
         },
 
-        addPrivateDrawing: async (_, data, {req, res}) => {
+        addDrawing: async (_, data, {req, res}) => {
             if(!req.session.username) {
                 throw new AuthenticationError()
             }
@@ -107,12 +116,40 @@ const resolvers = {
             const name = data.name;
             const username = req.session.username;
             const path = "";
-            const public = false;
+            const public = data.public;
 
-            const t = await privateDrawings.insertMany({name, username, path, public})
+            const t = await drawings.insertMany({name, username:[username], path, public})
 
-            return "success";
-        }
+            return t[0]._id
+        },
+
+        findRoom: async (_, data, {req, res}) => {
+            if(!req.session.username) {
+                throw new AuthenticationError();
+            }
+
+            const drawing = await drawings.find({_id: data._id, public:true}).exec()
+            if(drawing.length > 0) {
+                const x = await drawings.updateOne({_id: data._id, public:true}, {$push: {username:req.session.username}}).exec()
+                return true;
+            } else {
+                return false;
+            }
+        },
+
+        loadImage: async (_, data, {req, res}) => {
+            if(!req.session.username) {
+                throw new AuthenticationError();
+            }
+
+            const drawing = await drawings.find({_id: data._id, public:true}).exec()
+
+            if(drawing.length > 0 && drawing[0].path != "") {
+                return true;
+            } else {
+                return false;
+            }
+        },
 
     }
 }

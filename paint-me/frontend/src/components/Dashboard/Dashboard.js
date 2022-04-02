@@ -10,7 +10,8 @@ import { useNavigate } from 'react-router-dom';
 
 function Dashboard(props) {
     let navigate = useNavigate();
-    const [privateDrawings, setPrivateDrawings] = useState([])
+    const [privateDrawings, setPrivateDrawings] = useState([]);
+    const [publicDrawings, setPublicDrawings] = useState([]);
 
     useEffect(() => {
 
@@ -23,9 +24,13 @@ function Dashboard(props) {
         })
 
         api.getPrivateDrawings((res) => {
-            console.log(res.data.privateDrawings)
             setPrivateDrawings(res.data.privateDrawings)
-            console.log(privateDrawings)
+        }, (err) => {
+            navigate("/")
+        })
+
+        api.getPublicDrawings((res) => {
+            setPublicDrawings(res.data.publicDrawings)
         }, (err) => {
             navigate("/")
         })
@@ -41,11 +46,11 @@ function Dashboard(props) {
                 <Box marginTop="3">
                     <Heading size="md" fontFamily="'Roboto Slab', serif" borderBottom="1px solid black" paddingBottom="10px" width="40%">Private Drawings</Heading>
                 </Box>
-                <Carousel items={privateDrawings}/>
+                <Carousel items={privateDrawings} drawpath="/SoloDraw"/>
                 <Box marginTop="4">
                     <Heading size="md" fontFamily="'Roboto Slab', serif" borderBottom="1px solid black" paddingBottom="10px" width="40%">Shared Drawings</Heading>
                 </Box>
-                <Carousel items={props.public}/>
+                <Carousel items={publicDrawings} drawpath="/draw"/>
             </Container>
         </div>
     )

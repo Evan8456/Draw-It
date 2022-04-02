@@ -43,7 +43,7 @@ export default function Carousel(props) {
                     path = process.env.REACT_APP_BACKEND + "/api/drawing/" + props.items[i]._id
                 }
 
-                card.push(<CarouselCard title={props.items[i].name} image={path} _id={props.items[i]._id} key={props.items[i]._id} width={w} path={props.items[i].path}/>)
+                card.push(<CarouselCard title={props.items[i].name} image={path} _id={props.items[i]._id} key={props.items[i]._id} width={w} path={props.items[i].path} drawpath={props.drawpath}/>)
             }
             setCards(card)
         }
