@@ -49,7 +49,7 @@ export function SoloDraw() {
     context.fillRect(0, 0, canvas.width, canvas.height);
     contextRef.current = context;
 
-    if(load != "") {
+    if(load !== "" && load!== undefined && load === true) {
       var image =new Image()
       image.onload = () => {
         canvasRef.current.getContext("2d").drawImage(image,0,0,image.width,image.height,0,0,600,600);;
