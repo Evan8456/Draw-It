@@ -105,7 +105,12 @@ if(process.env.ENVIRONMENT == "dev") {
 
       socket.join(room);
       console.log(socket.rooms);
+      // save drawing
+      socket.to(room).emit("save-drawing", socket.id);
     })
+    socket.on("load-image-bk", (room, sid) =>{
+      socket.to(room).emit("load-image", sid);
+    });
   })
   // apollo server
   async function start() {
@@ -166,7 +171,12 @@ if(process.env.ENVIRONMENT == "dev") {
       });
       socket.join(room);
       console.log(socket.rooms);
+      // save drawing
+      socket.to(room).emit("save-drawing", socket.id);
     })
+    socket.on("load-image-bk", (room, sid) =>{
+      socket.to(room).emit("load-image", sid);
+    });
   })
   // apollo server
   app.use(session);
@@ -193,24 +203,26 @@ app.use(function (req, res, next){
   var cookies = cookie.parse(req.headers.cookie || '');
   console.log(req.session.username);
   req.username =(req.session.user)? req.session.user.username : ''
-  console.log("HTTP request", req.username, req.method, req.url, req.body);
+  //console.log("HTTP request", req.username, req.method, req.url, req.body);
   next();
 });
 
 app.post("/api/drawing", isAuthenticated, upload.single("image"), function(req, res, next) {
-  console.log(req.body)
   const _id = req.body._id
-
+  console.log(_id)
   drawingModel.findById(_id, function(err, doc) {
     if (err) return res.status(500).end(err);
     if (!doc) return res.status(404).send();
     if (!doc.public && doc.username != req.session.username) return res.status(401).send();
 
-    console.log(req.body._id)
+    console.log("test2")
     doc.path = req.file;
-    doc.save();
-    res.json(doc);
-    next();
+    doc.save().then(function (savedDoc) {
+      res.json(savedDoc);
+      console.log(savedDoc);
+      console.log("promise furfilled");
+      next();
+    });;
   })
 });
 
@@ -223,7 +235,7 @@ app.get("/api/drawing/:id", isAuthenticated, function(req, res, next) {
     if (!doc.public && doc.username != req.session.username) return res.status(401).send();
   
     let image = doc.path;
-    console.log(image)
+    //console.log(image)
     res.setHeader('Content-Type', image.mimetype);
     console.log(__dirname + "/" + image.path);
     res.sendFile(__dirname + "/" + image.path);

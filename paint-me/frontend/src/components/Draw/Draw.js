@@ -9,7 +9,7 @@ import {io} from 'socket.io-client';
 
 import Navbar from "../Navbar/Navbar";
 import { Box, Alert, AlertIcon} from "@chakra-ui/react";
-
+import {socket} from "./socket";
 
 export function Draw() {
   const [title, setTitle] = useState(null);
@@ -22,12 +22,11 @@ export function Draw() {
   const [thickness, setThick] = useState(null);
   const [startX, setStartX] = useState(null);
   const [startY, setStartY] = useState(null);
-  const [s, setS] = useState(null);
   const [variant, setVariant] = useState('success');
   const [display, setDisplay] = useState('none');
   const [text, setText] = useState('Successfully Saved');
 
-  const [room, setR] = useState(null);
+  //const [room, setR] = useState(null);
 
   let navigate = useNavigate();
   const { state } = useLocation();
@@ -38,27 +37,31 @@ export function Draw() {
       if(res.errors) {
         navigate("/");
       } else {
-        const socket = io(process.env.REACT_APP_SOCKET,{secure: true})
-        setS(socket);
-        
         if(state.id !== null){
           socket.on('drawing', goDraw);
           socket.on("connect", () =>{
             console.log(`connected with id :${socket.id}`);
             socket.emit('join-room',state.id);
             console.log(`socket join room: ${state.id}`);
-            setR(state.id);
+            //setR(state.id);
           });
-        }else{
-
-        socket.on('drawing', goDraw);
-        socket.on("connect", () =>{
-          console.log(`connected with id :${socket.id}`);
-          socket.emit('join-room',"testRoom");
-          console.log(`socket join room: testRoom`);
-          setR("testRoom");
-        });
-      }
+          socket.on("save-drawing",(sid)=>{
+            console.log("trying to saving image")
+            if(socket.id !== sid){
+              console.log("saving image")
+              saveImage();
+            }
+            
+          })
+          socket.on("load-image",(sid)=>{
+            console.log("trying to loading image")
+            if(socket.id !== sid){
+              console.log("loading image")
+              loadImage();
+            }
+          })
+        }
+        
       }
     }, (err) => {
       navigate("/");
@@ -81,20 +84,29 @@ export function Draw() {
     
     contextRef.current = context;
 
-
-    console.log(load);
-    if(load != "") {
+    if(load !== "" && load!== undefined && load === true) {
       var image =new Image()
       image.onload = () => {
         canvasRef.current.getContext("2d").drawImage(image,0,0,image.width,image.height,0,0,600,600);;
       }
       if(process.env.REACT_APP_ENVIRONMENT) image.crossOrigin = "use-credentials";
-      image.src =  process.env.REACT_APP_BACKEND + "/api/drawing/" + id;
+      image.src =  process.env.REACT_APP_BACKEND + "/api/drawing/" + id + "?" + new Date().getTime();
     }
 
   }, []);
 
+  function loadImage(){
+    var image =new Image()
+    image.onload = () => {
+      canvasRef.current.getContext("2d").drawImage(image,0,0,image.width,image.height,0,0,600,600);
+    }
+    if(process.env.REACT_APP_ENVIRONMENT === "dev"){ image.crossOrigin = "use-credentials";}
+    image.src =  process.env.REACT_APP_BACKEND + "/api/drawing/" + id+ "?" + new Date().getTime();
+    //image.src = "http://localhost:3002/api/drawing/624774ff88a5bf8e161b84ef/"
+  }
+
   function goDraw(data){
+    //console.log(data);
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");
     context.strokeStyle= data.color;
@@ -108,19 +120,6 @@ export function Draw() {
     context.lineWidth = thickRef.current.value;
 
   }
-  function joinRoom1(){
-    s.emit('join-room',"testRoom1");
-    setR("testRoom1");
-    clearCanvas();
-    console.log(`socket join room: testRoom 1`);
-  }
-
-  function joinRoom2(){
-    s.emit('join-room',"testRoom2");
-    setR("testRoom2");
-    clearCanvas();
-    console.log(`socket join room: testRoom 2`);
-  }
 
   function clearCanvas(){
     const canvas = canvasRef.current;
@@ -129,21 +128,25 @@ export function Draw() {
   }
 
   function saveImage() {
+    console.log("SAVING IMAGE RIGHT NOW")
     const canvas = canvasRef.current;
+    //console.log(canvas);
     canvas.toBlob((url) => {
+      //console.log(url);
       if(url) {
-        api.saveImage(id, url, (res) => {
+        api.saveImage(state.id, url, (res) => {
           setVariant("success")
           setDisplay("flex")
           setText("Successfully Saved")
-    
-          const time = setTimeout(setDisplay("none"), 3000)
+          //const time = setTimeout(setDisplay("none"), 3000)
+          console.log("PROMISE FURFILLED");
+          socket.emit('load-image-bk',state.id, socket.id);
         }, (err) => {
           setVariant("failure")
           setDisplay("flex")
           setText("Coiuld not save Image")
     
-          const time = setTimeout(setDisplay("none"), 3000)
+          //const time = setTimeout(setDisplay("none"), 3000)
         })
       }
     })
@@ -153,7 +156,7 @@ export function Draw() {
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");
     context.strokeStyle = color;
-    console.log(context.strokeStyle);
+    //console.log(context.strokeStyle);
   };
 
   function makeErase(){
@@ -175,7 +178,7 @@ export function Draw() {
  
 
   const setThickness = (thickness) => {
-    console.log(thickness);
+    //console.log(thickness);
     setThick(thickness);
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");
@@ -183,7 +186,7 @@ export function Draw() {
   };
 
   const onMouseDown = (e ) => {
-    console.log(e);
+    //console.log(e);
     const { offsetX, offsetY } = e.nativeEvent;
     setStartX(offsetX);
     setStartY(offsetY);
@@ -206,20 +209,20 @@ export function Draw() {
     if (!isDrawing) {
       return;
     }
-    console.log("currently drawing on room: " + room);
+    //console.log("currently drawing on room: " + room);
     contextRef.current.beginPath();
     contextRef.current.moveTo(startX, startY);
     const { offsetX, offsetY } = e.nativeEvent;
     setStartX(offsetX);
     setStartY(offsetY);
-    console.log(canvasRef.current.getContext('2d').strokeStyle);
+    //console.log(canvasRef.current.getContext('2d').strokeStyle);
     contextRef.current.lineTo(offsetX, offsetY);
     contextRef.current.stroke();
 
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");
 
-    s.emit('drawing', {
+    socket.emit('drawing', {
       x0: startX,
       y0: startY,
       x1: offsetX,
@@ -227,7 +230,7 @@ export function Draw() {
       color: context.strokeStyle,
       thickness: context.lineWidth
 
-    }, room);
+    }, state.id);
     
   };
 
@@ -316,8 +319,6 @@ export function Draw() {
                Save
           </Box>
 
-        <button onClick={() => joinRoom1()}>Test Room 1</button>
-        <button onClick={() => joinRoom2()}>Test Room 2</button>
       </div>
       </div>
     </>
