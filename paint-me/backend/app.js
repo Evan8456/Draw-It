@@ -235,10 +235,21 @@ app.get("/api/drawing/:id", isAuthenticated, function(req, res, next) {
     if (!doc.public && doc.username != req.session.username) return res.status(401).send();
   
     let image = doc.path;
+    console.log(image.mimetype);
     //console.log(image)
-    res.setHeader('Content-Type', image.mimetype);
-    console.log(__dirname + "/" + image.path);
-    res.sendFile(__dirname + "/" + image.path);
+    if(image !== null && image !==undefined){
+      if(image.mimetype !== null && image.mimetype !==undefined){
+        res.setHeader('Content-Type', image.mimetype);
+        console.log(__dirname + "/" + image.path);
+        res.sendFile(__dirname + "/" + image.path);
+      }else{
+        res.status(400).end("bad request");
+      }
+     
+    }else{
+      res.status(400).end("bad request");
+    }
+    
   });
 });
 
