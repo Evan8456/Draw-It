@@ -23,7 +23,7 @@ export function SoloDraw() {
   
   let navigate = useNavigate();
   const { state } = useLocation();
-  console.log(state)
+
   const { id, load } = state;
 
   useEffect(() => {
@@ -77,7 +77,7 @@ export function SoloDraw() {
   }
 
   const setThickness = (thickness) => {
-    console.log(thickness);
+
     setThick(thickness);
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");
@@ -85,7 +85,6 @@ export function SoloDraw() {
   };
 
   const onMouseDown = (e ) => {
-    console.log(e);
     const { offsetX, offsetY } = e.nativeEvent;
     setStartX(offsetX);
     setStartY(offsetY);
@@ -107,7 +106,7 @@ export function SoloDraw() {
       if(url) {
         api.saveImage(id, url, (res) => {
         }, (err) => {
-          console.log(err)
+          console.error(err)
         })
       }
     })

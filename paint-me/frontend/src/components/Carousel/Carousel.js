@@ -13,14 +13,12 @@ export default function Carousel(props) {
     const [right, setRight] = useState("");
 
     useEffect(() => {
-        console.log(page)
         if(page == 0) {
             setLeft("")
         } else {
             setLeft(<IconButton colorScheme='teal' icon={<LeftChev fontSize="40px"/>} onClick={() => {setPage(page-1)}}/>)
         }
 
-        console.log((page+1)*num < props.items.length)
         if((page+1)*num < props.items.length) {
             setRight(<IconButton colorScheme='teal' icon={<RightChev fontSize="40px"/>} onClick={() => {setPage(page+1)}}/>)
         } else {

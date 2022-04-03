@@ -6,9 +6,9 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import api from "../../api"
 
 import {io} from 'socket.io-client';
-
+import { FaTwitter, FaDownload } from "react-icons/fa";
 import Navbar from "../Navbar/Navbar";
-import { Box, Alert, AlertIcon} from "@chakra-ui/react";
+import { Box, Alert, AlertIcon, useClipboard, Button, Flex, chakra, IconButton } from "@chakra-ui/react";
 // import {socket} from "./socket";
 
 export function Draw() {
@@ -26,12 +26,13 @@ export function Draw() {
   const [display, setDisplay] = useState('none');
   const [text, setText] = useState('Successfully Saved');
   const [s, setSocket] = useState(null);
-
-  //const [room, setR] = useState(null);
+  let Twitter = chakra(FaTwitter);
+   
 
   let navigate = useNavigate();
   const { state } = useLocation();
   const { id, load } = state;
+  const { hasCopied, onCopy } = useClipboard(id);
 
   useEffect(() => {
     const socket = io(process.env.REACT_APP_SOCKET,{secure: true});
@@ -42,28 +43,25 @@ export function Draw() {
       } else {
         
         
-        console.log(socket);
         if(state.id !== null){
           socket.on('drawing', goDraw);
-          console.log("sup");
+          
           socket.on("connect", () =>{
-            console.log(`connected with id :${socket.id}`);
+         
             socket.emit('join-room',state.id);
-            console.log(`socket join room: ${state.id}`);
-            //setR(state.id);
           });
           socket.on("save-drawing",(sid)=>{
-            console.log("trying to saving image")
+            
             if(socket.id !== sid){
-              console.log("saving image")
+              
               saveImage(socket);
             }
             
           })
           socket.on("load-image",(sid)=>{
-            console.log("trying to loading image")
+            
             if(socket.id !== sid){
-              console.log("loading image")
+              
               loadImage();
             }
           })
@@ -113,7 +111,6 @@ export function Draw() {
   }
 
   function goDraw(data){
-    //console.log(data);
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");
     context.strokeStyle= data.color;
@@ -135,11 +132,10 @@ export function Draw() {
   }
 
   function saveImage(socket) {
-    console.log("SAVING IMAGE RIGHT NOW")
     const canvas = canvasRef.current;
-    //console.log(canvas);
+
     canvas.toBlob((url) => {
-      //console.log(url);
+
       if(url) {
         api.saveImage(state.id, url, (res) => {
           
@@ -147,9 +143,7 @@ export function Draw() {
           setDisplay("flex")
           setText("Successfully Saved")
           //const time = setTimeout(setDisplay("none"), 3000)
-          console.log("PROMISE FURFILLED");
-          console.log(state);
-          console.log(socket);
+         
           socket.emit('load-image-bk',state.id, socket.id);
         }, (err) => {
           setVariant("failure")
@@ -166,7 +160,7 @@ export function Draw() {
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");
     context.strokeStyle = color;
-    //console.log(context.strokeStyle);
+    
   };
 
   function makeErase(){
@@ -188,7 +182,6 @@ export function Draw() {
  
 
   const setThickness = (thickness) => {
-    //console.log(thickness);
     setThick(thickness);
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");
@@ -196,17 +189,12 @@ export function Draw() {
   };
 
   const onMouseDown = (e ) => {
-    //console.log(e);
     const { offsetX, offsetY } = e.nativeEvent;
     setStartX(offsetX);
     setStartY(offsetY);
   
     setIsDrawing(true);
-    // contextRef.current.beginPath();
-    // contextRef.current.moveTo(offsetX, offsetY);
-    // contextRef.current.lineTo(offsetX, offsetY);
-    // contextRef.current.stroke();
-    // contextRef.current.closePath();
+
 
   };
 
@@ -219,13 +207,13 @@ export function Draw() {
     if (!isDrawing) {
       return;
     }
-    //console.log("currently drawing on room: " + room);
+   
     contextRef.current.beginPath();
     contextRef.current.moveTo(startX, startY);
     const { offsetX, offsetY } = e.nativeEvent;
     setStartX(offsetX);
     setStartY(offsetY);
-    //console.log(canvasRef.current.getContext('2d').strokeStyle);
+    
     contextRef.current.lineTo(offsetX, offsetY);
     contextRef.current.stroke();
 
@@ -246,8 +234,15 @@ export function Draw() {
 
   return (
     <>
+      
       <Navbar page="draw"/>
-      <div>{title}</div>
+      <Flex flexDirection={"row"} alignItems="center" width="100%" justifyContent={"center"}>
+      <h1>Room Code:</h1>
+      </Flex>
+      <Flex flexDirection={"row"} alignItems="center" width="100%" justifyContent={"center"}>
+        <h1>{state.id}</h1>
+        <Button onClick={onCopy} ml={2}> Copy</Button>
+      </Flex>
 
       <div className="draw">
         <canvas

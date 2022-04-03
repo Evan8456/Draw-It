@@ -37,7 +37,6 @@ function NavBar(props) {
     }
 
     const createDraw = (title,collab ) => {
-        console.log("Creating canvas");
         if(title !== "" && collab === "Public"){
           api.addDrawing(title, true, (res) => {
             navigate("/Draw", { state: {  id: res.data.addDrawing, load: false } });
@@ -61,7 +60,7 @@ function NavBar(props) {
               })
             }
           }, err => {
-            console.log(err)
+            console.error(err)
           })
         }
         
@@ -71,7 +70,7 @@ function NavBar(props) {
       api.signout((res) => {
           navigate("/")
       }, (err) => {
-          console.log(err);
+          console.error(err);
       })
     }
 

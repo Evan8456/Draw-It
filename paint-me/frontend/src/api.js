@@ -119,7 +119,7 @@ module.saveImage = function(_id, image, callback, callbackerr) {
     formdata.append("_id", _id);
     formdata.append("image", image);
 
-    console.log(formdata.get("image"))
+
 
     send("POST", "/api/drawing", formdata, false, function(err, res) {
         if(err) return callbackerr(err)
@@ -161,8 +161,6 @@ module.checkRoom = function(_id, callback, errCallback) {
 }
 
 module.checkLoad = function(_id, callback, errCallback) {
-
-    console.log("CHECK LOAD")
     let data = {
         query: `mutation ($_id: String!){
             loadImage(_id: $_id)

@@ -41,7 +41,7 @@ function Dashboard(props) {
             <Navbar page="dashboard"/>
             <Container  maxWidth="container.xl" marginTop="5">
                 <Flex flexDirection="row">
-                    <Heading size="xl" fontFamily="'Roboto Slab', serif">Welcome &nbsp;</Heading><Heading size="xl" fontFamily="'Roboto Slab', serif" color="teal">User</Heading>
+                    <Heading size="xl" fontFamily="'Roboto Slab', serif">Welcome &nbsp;</Heading>
                 </Flex>
                 <Box marginTop="3">
                     <Heading size="md" fontFamily="'Roboto Slab', serif" borderBottom="1px solid black" paddingBottom="10px" width="40%">Private Drawings</Heading>
