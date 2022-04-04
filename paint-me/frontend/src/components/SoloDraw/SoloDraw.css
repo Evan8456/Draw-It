@@ -5,17 +5,13 @@ canvas {
   }
 
   .tools{
-    margin-left: 0px;
-    margin-right: 38px;
-    
+    margin-left: 35px;   
   }
 
   .solo-draw{
-  display: table;
+  display: flex;
+  flex-direction: column;
   margin: 0 auto;
-  }
-
-  .solo-tools{
-    margin-left: -50px;
-    margin-right: 258px;
+  justify-content: center;
+  align-items: center;
   }

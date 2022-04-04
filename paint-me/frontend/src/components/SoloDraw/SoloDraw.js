@@ -5,7 +5,7 @@ import { useNavigate,useLocation } from 'react-router-dom';
 import api from "../../api"
 import Navbar from "../Navbar/Navbar";
 import { FaPlus } from 'react-icons/fa';
-import { Box, Button, chakra} from "@chakra-ui/react";
+import { Alert, AlertDescription, AlertIcon, AlertTitle, Box, Button, chakra, CloseButton, Flex, useDisclosure} from "@chakra-ui/react";
 
 
 export function SoloDraw() {
@@ -20,6 +20,10 @@ export function SoloDraw() {
   const [thickness, setThick] = useState(null);
   const [startX, setStartX] = useState(null);
   const [startY, setStartY] = useState(null);
+  const [status, setStatus] = useState("success");
+  const [warning, setWarning] = useState("Successfully Saved!")
+  const [desc, setDesc] = useState("")
+  const [open, setOpen] = useState(false)
   
   let navigate = useNavigate();
   const { state } = useLocation();
@@ -105,9 +109,21 @@ export function SoloDraw() {
     canvas.toBlob((url) => {
       if(url) {
         api.saveImage(id, url, (res) => {
+          setStatus("success")
+          setWarning("Image Saved!")
+          setDesc("");
+          setOpen(true);
         }, (err) => {
-          console.error(err)
+          setStatus("warning")
+          setWarning("Could not Save!")
+          setDesc(err);
+          setOpen(true);
         })
+      } else {
+        setStatus("warning")
+        setWarning("Could not Save!")
+        setDesc("");
+        setOpen(true);
       }
     })
   }
@@ -154,51 +170,60 @@ export function SoloDraw() {
   return (
     <>
    
-      <Navbar page="draw"/>  
+      <Navbar page="draw"/>
+      <Alert status={status} display={open ? "flex" : "none"}>
+        <AlertIcon/>
+        <AlertTitle mr={2}>{warning}</AlertTitle>
+        <AlertDescription>{desc}</AlertDescription>
+        <CloseButton position='absolute' right='8px' top='8px' onClick={() => { setOpen(false) }}/>
+      </Alert>  
+
       <div className="solo-draw">
         <div>{title}</div>
-      <input type="file" ref={importImg} onChange={() => addImg()}  accept="image/png, image/jpeg"/>
-      
-       <Box as="button" 
-            onClick={() =>  uploadImg()} 
-            rounded="2xl" 
-            bg="teal.50" 
-            lineHeight='1.2'
-            boxShadow="md" 
-            height='35px'
-            transition='all 0.2s cubic-bezier(.08,.52,.52,1)'
-            border='1px'
-            px='8px'
-            fontSize='15px'
-            fontWeight='semibold'
-            borderColor='#ccd0d5'
-            className="solo-tools"
-            width='75px'
-            
-            
 
-            _hover={{ bg: 'green.100' }}>
-               Upload
-          </Box>
+      <Flex>
+        <input type="file" ref={importImg} onChange={() => addImg()}  accept="image/png, image/jpeg"/>
+        
+        <Box as="button" 
+              onClick={() =>  uploadImg()} 
+              rounded="2xl" 
+              bg="teal.50" 
+              lineHeight='1.2'
+              boxShadow="md" 
+              height='35px'
+              transition='all 0.2s cubic-bezier(.08,.52,.52,1)'
+              border='1px'
+              px='8px'
+              fontSize='15px'
+              fontWeight='semibold'
+              borderColor='#ccd0d5'
+              className="tools"
+              width='75px'
+              
 
-       <Box as="button" 
-            onClick={() => clearCanvas()} 
-            rounded="2xl" 
-            bg="red.50" 
-            lineHeight='1.2'
-            boxShadow="md" 
-            height='35px'
-            transition='all 0.2s cubic-bezier(.08,.52,.52,1)'
-            border='1px'
-            px='8px'
-            fontSize='14px'
-            fontWeight='semibold'
-            borderColor='#ccd0d5'
-            className="solo-tools"
-            width='75px'
-            _hover={{ bg: 'white.100' }}>
-               Clear
-          </Box>
+              _hover={{ bg: 'green.100' }}>
+                Upload
+            </Box>
+
+        <Box as="button" 
+              onClick={() => clearCanvas()} 
+              rounded="2xl" 
+              bg="grey.50" 
+              lineHeight='1.2'
+              boxShadow="md" 
+              height='35px'
+              transition='all 0.2s cubic-bezier(.08,.52,.52,1)'
+              border='1px'
+              px='8px'
+              fontSize='14px'
+              fontWeight='semibold'
+              borderColor='#ccd0d5'
+              className="tools"
+              width='75px'
+              _hover={{ bg: 'white.100' }}>
+                Clear
+            </Box>
+        </Flex>
 
         <canvas
           className="test"
