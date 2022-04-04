@@ -13,7 +13,7 @@ export default function Carousel(props) {
     const [right, setRight] = useState("");
 
     useEffect(() => {
-        if(page == 0) {
+        if(page === 0) {
             setLeft("")
         } else {
             setLeft(<IconButton colorScheme='teal' icon={<LeftChev fontSize="40px"/>} onClick={() => {setPage(page-1)}}/>)
@@ -28,14 +28,14 @@ export default function Carousel(props) {
         if(page*num < props.items.length) {
             let card = []
             let w = "22%"
-            if(num == 2) {
+            if(num === 2) {
                 w = "47%"
             }
 
             for(let i = page*num; i <Math.min((page+1)*num, props.items.length); i++) {
                 let path = props.items[i].path;
 
-                if(path == "") {
+                if(path === "") {
                     path = drawing
                 } else {
                     path = process.env.REACT_APP_BACKEND + "/api/drawing/" + props.items[i]._id

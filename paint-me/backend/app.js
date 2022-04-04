@@ -12,7 +12,7 @@ const saltRounds = 10;
 const fs = require('fs');
 const {typeDefs} = require("./schema/type-defs");
 const {resolvers} = require("./schema/resolvers");
-const cors = require('cors')
+const cors = require('cors');
 const multer = require('multer');
 
 mongoose.connect(process.env.MONGODB_CONNECTION);
@@ -45,7 +45,6 @@ let storage = multer.diskStorage({
 
   filename: function(req, file, cb) {
       let extension = file.mimetype.split("/")[1];
-      console.log(req.body);
       cb(null, req.body._id + "." + extension);
   }
 });
@@ -54,7 +53,7 @@ let upload = multer({storage});
 var corsOptions = {
   origin:['http://localhost:3000', 'https://studio.apollographql.com'],
   credentials: true
-}
+};
 
 //DEV ONLY
 if(process.env.ENVIRONMENT == "dev") {
@@ -81,50 +80,42 @@ if(process.env.ENVIRONMENT == "dev") {
       origin: "http://localhost:3000",
       methods: ["GET", "POST"]
     }});
-  console.log("Dev")
   // both use
   //socket io
   io.use(sharedsession(session, {
     autoSave:true
   })); 
   io.on("connection", socket =>{
-    console.log(socket.id)
     socket.on("drawing", (data, room) =>{
-      console.log("currently drawing on room: " + room);
       socket.to(room).emit('drawing', data);
-      //io.broadcast.emit('test2',param1);
-      //socket.to(room);
-    })
+    });
     socket.on("join-room", (room) =>{
       var rooms = socket.rooms;
-      console.log(socket.rooms);
       rooms.forEach(element => {
-        console.log(element);
         socket.leave(element);
       });
 
       socket.join(room);
-      console.log(socket.rooms);
       // save drawing
       socket.to(room).emit("save-drawing", socket.id);
-    })
+    });
     socket.on("load-image-bk", (room, sid) =>{
       socket.to(room).emit("load-image", sid);
     });
-  })
+  });
   // apollo server
   async function start() {
     const server = new ApolloServer({ typeDefs, resolvers,
     context: ({req, res}) => ({req, res}),
     cors: false
     });
-    await server.start()
+    await server.start();
     
     server.applyMiddleware({ app, cors:corsOptions });
   }
   start();
   httpServer.listen(3002, () => {
-    console.log("Websocket started at port test ", 3002)
+    console.log("Websocket started at port test ", 3002);
   });
 } else {
   var privateKey  = fs.readFileSync('/etc/letsencrypt/live/draw-it.me/privkey.pem');
@@ -148,49 +139,41 @@ if(process.env.ENVIRONMENT == "dev") {
   });
   const io = require("socket.io")(httpsServer, {
     origins: 'https://localhost:3000'});
-  console.log("Server")
   // both use
   //socket io
   io.use(sharedsession(session, {
     autoSave:true
   })); 
   io.on("connection", socket =>{
-    console.log(socket.id)
     socket.on("drawing", (data, room) =>{
-      console.log("currently drawing on room: " + room);
       socket.to(room).emit('drawing', data);
-      //io.broadcast.emit('test2',param1);
-      //socket.to(room);
-    })
+    });
     socket.on("join-room", (room) =>{
       var rooms = socket.rooms;
-      console.log(socket.rooms);
       rooms.forEach(element => {
-        console.log(element);
         socket.leave(element);
       });
       socket.join(room);
-      console.log(socket.rooms);
       // save drawing
       socket.to(room).emit("save-drawing", socket.id);
-    })
+    });
     socket.on("load-image-bk", (room, sid) =>{
       socket.to(room).emit("load-image", sid);
     });
-  })
+  });
   // apollo server
   app.use(session);
   async function start() {
     const server = new ApolloServer({ typeDefs, resolvers,
     context: ({req, res}) => ({req, res})});
-    await server.start()
+    await server.start();
     
     server.applyMiddleware({ app });
   }
   start();
 
   httpsServer.listen(3002, () => {
-    console.log("Websocket started at port test server", 3002)
+    console.log("Websocket started at port test server", 3002);
   });
 }
 
@@ -202,32 +185,28 @@ var isAuthenticated = function(req, res, next) {
 app.use(function (req, res, next){
   var cookies = cookie.parse(req.headers.cookie || '');
   console.log(req.session.username);
-  req.username =(req.session.user)? req.session.user.username : ''
-  //console.log("HTTP request", req.username, req.method, req.url, req.body);
+  req.username =(req.session.user)? req.session.user.username : '';
+  console.log("HTTP request", req.username, req.method, req.url, req.body);
   next();
 });
 
 app.post("/api/drawing", isAuthenticated, upload.single("image"), function(req, res, next) {
-  const _id = req.body._id
-  console.log(_id)
+  const _id = req.body._id;
   drawingModel.findById(_id, function(err, doc) {
     if (err) return res.status(500).end(err);
     if (!doc) return res.status(404).send();
     if (!doc.public && doc.username != req.session.username) return res.status(401).send();
 
-    console.log("test2")
     doc.path = req.file;
     doc.save().then(function (savedDoc) {
       res.json(savedDoc);
-      console.log(savedDoc);
-      console.log("promise furfilled");
       next();
-    });;
-  })
+    });
+  });
 });
 
 app.get("/api/drawing/:id", isAuthenticated, function(req, res, next) {
-  const _id = req.params.id
+  const _id = req.params.id;
 
   drawingModel.findById(_id, function(err, doc) {
     if (err) return res.status(500).end(err);
@@ -235,12 +214,10 @@ app.get("/api/drawing/:id", isAuthenticated, function(req, res, next) {
     if (!doc.public && doc.username != req.session.username) return res.status(401).send();
   
     let image = doc.path;
-    console.log(image.mimetype);
-    //console.log(image)
+
     if(image !== null && image !==undefined){
       if(image.mimetype !== null && image.mimetype !==undefined){
         res.setHeader('Content-Type', image.mimetype);
-        console.log(__dirname + "/" + image.path);
         res.sendFile(__dirname + "/" + image.path);
       }else{
         res.status(400).end("bad request");
@@ -252,13 +229,3 @@ app.get("/api/drawing/:id", isAuthenticated, function(req, res, next) {
     
   });
 });
-
-
-
-
-
-
-//app.listen({ port: 3001 }, () =>
-  //console.log(`Server running on http://localhost:3001, test queries on http://localhost:3001/graphql`)
-  
-//);

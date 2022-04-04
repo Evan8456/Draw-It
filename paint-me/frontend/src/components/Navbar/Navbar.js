@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {connect} from 'react-redux';
 import { FaPlus } from 'react-icons/fa';
 import api from '../../api';
@@ -26,16 +26,15 @@ import {
     chakra,
     Alert,
     AlertIcon,
-    AlertDescription,
     AlertTitle
-} from '@chakra-ui/react'
+} from '@chakra-ui/react';
 
 function NavBar(props) {
   const [warning, setWarning] = useState(false);
 
-    let text = ""
+    let text = "";
     if(props.type === "login") {
-        text = "Get Started"
+        text = "Get Started";
     } else {
         text = "Login Now";
     }
@@ -46,7 +45,7 @@ function NavBar(props) {
         } else {
             props.dispatchPage("login");
         }
-    }
+    };
 
     const createDraw = (title,collab ) => {
         // santize input before calling api
@@ -54,14 +53,14 @@ function NavBar(props) {
         if(title !== "" && collab === "Public"){
           api.addDrawing(title, true, (res) => {
             navigate("/Draw", { state: {  id: res.data.addDrawing, load: false } });
-          })
+          });
         }else if(title !== "" && collab === "Private"){
           api.addDrawing(title, false, (res) => {
             navigate("/SoloDraw", { state: {  id: res.data.addDrawing, load: false } });
-          })
+          });
         }
         
-    }
+    };
 
     const joinRoom = (roomCode) => {
         // api check to see room exists
@@ -70,45 +69,42 @@ function NavBar(props) {
           api.checkRoom(roomCode, (res) => {
             if(res.data.findRoom) {
               api.checkLoad(roomCode, (res) => {
-                  navigate("/Draw", {state: {id: roomCode, load:res.data.loadImage}})
-              })
+                  navigate("/Draw", {state: {id: roomCode, load:res.data.loadImage}});
+              });
             } else {
               setWarning(true);
             }
           }, err => {
-            console.error(err)
-          })
+            console.error(err);
+          });
         }
         
-    }
+    };
 
     function signOut() {
       api.signout((res) => {
-          navigate("/")
+          navigate("/");
       }, (err) => {
           console.error(err);
-      })
+      });
     }
 
     let CFaPlus = chakra(FaPlus);
   
     const { isOpen: isCollabOpen , onOpen: onCollabOpen, onClose: onCollabClose }  = useDisclosure();
-    const { isOpen: isJoinRoomOpen , onOpen: onJoinRoomOpen, onClose: onJoinRoomClose }  = useDisclosure({onClose: () => {setWarning(false)}})
+    const { isOpen: isJoinRoomOpen , onOpen: onJoinRoomOpen, onClose: onJoinRoomClose }  = useDisclosure({onClose: () => {setWarning(false);}});
 
-    const initialRef = React.useRef()
-    const finalRef = React.useRef()
+    const initialRef2 = React.useRef();
+    const collab = React.useRef();
+    const finalRef2 = React.useRef();
 
-    const initialRef2 = React.useRef()
-    const collab = React.useRef()
-    const finalRef2 = React.useRef()
-
-    const joinRoomRef = React.useRef()
-    const roomCode = React.useRef()
-    const finalRef3 = React.useRef()
+    const joinRoomRef = React.useRef();
+    const roomCode = React.useRef();
+    const finalRef3 = React.useRef();
 
   
     let button;
-    let navigate = useNavigate()
+    let navigate = useNavigate();
     if(props.page === "landing") {
         button = <Button onClick={() => changePage()}>{text}</Button>
     } else if (props.page === "dashboard") {

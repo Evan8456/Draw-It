@@ -3,40 +3,32 @@ import "./Draw.css";
 
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import api from "../../api"
+import api from "../../api";
 
 import {io} from 'socket.io-client';
-import { FaTwitter, FaDownload } from "react-icons/fa";
 import Navbar from "../Navbar/Navbar";
-import { Box, Alert, AlertIcon, useClipboard, Button, Flex, chakra, AlertDescription, AlertTitle, CloseButton } from "@chakra-ui/react";
+import { Box, Alert, AlertIcon, useClipboard, Button, Flex, AlertDescription, AlertTitle, CloseButton } from "@chakra-ui/react";
 // import {socket} from "./socket";
 
 export function Draw() {
-  const [title, setTitle] = useState(null);
-  const [collaborators, setCollaborators] = useState(null);
   const canvasRef = useRef();
   const contextRef = useRef();
   const colorRef = useRef();
   const thickRef = useRef();
   const [isDrawing, setIsDrawing] = useState(false);
-  const [thickness, setThick] = useState(null);
   const [startX, setStartX] = useState(null);
   const [startY, setStartY] = useState(null);
-  const [variant, setVariant] = useState('success');
-  const [display, setDisplay] = useState('none');
-  const [text, setText] = useState('Successfully Saved');
   const [s, setSocket] = useState(null);
-  let Twitter = chakra(FaTwitter);
   const [status, setStatus] = useState("success");
-  const [warning, setWarning] = useState("Successfully Saved!")
-  const [desc, setDesc] = useState("")
-  const [open, setOpen] = useState(false)
+  const [warning, setWarning] = useState("Successfully Saved!");
+  const [desc, setDesc] = useState("");
+  const [open, setOpen] = useState(false);
    
 
   let navigate = useNavigate();
   const { state } = useLocation();
   const { id, load } = state;
-  const { hasCopied, onCopy } = useClipboard(id);
+  const { onCopy } = useClipboard(id);
 
   useEffect(() => {
     const socket = io(process.env.REACT_APP_SOCKET,{secure: true});
@@ -61,22 +53,20 @@ export function Draw() {
               saveImage(socket);
             }
             
-          })
+          });
           socket.on("load-image",(sid)=>{
             
             if(socket.id !== sid){
               
               loadImage();
             }
-          })
+          });
         }
         
       }
     }, (err) => {
       navigate("/");
-    })
-    setCollaborators(state.collaborators);
-    setTitle(state.title);
+    });
     const canvas = canvasRef.current;
     canvas.width = 600 * 2;
     canvas.height = 600 * 2;
@@ -94,10 +84,10 @@ export function Draw() {
     contextRef.current = context;
 
     if(load !== "" && load!== undefined && load === true) {
-      var image =new Image()
+      var image =new Image();
       image.onload = () => {
-        canvasRef.current.getContext("2d").drawImage(image,0,0,image.width,image.height,0,0,600,600);;
-      }
+        canvasRef.current.getContext("2d").drawImage(image,0,0,image.width,image.height,0,0,600,600);
+      };
       if(process.env.REACT_APP_ENVIRONMENT) image.crossOrigin = "use-credentials";
       image.src =  process.env.REACT_APP_BACKEND + "/api/drawing/" + id + "?" + new Date().getTime();
     }
@@ -105,10 +95,10 @@ export function Draw() {
   }, []);
 
   function loadImage(){
-    var image =new Image()
+    var image =new Image();
     image.onload = () => {
       canvasRef.current.getContext("2d").drawImage(image,0,0,image.width,image.height,0,0,600,600);
-    }
+    };
     if(process.env.REACT_APP_ENVIRONMENT === "dev"){ image.crossOrigin = "use-credentials";}
     image.src =  process.env.REACT_APP_BACKEND + "/api/drawing/" + id+ "?" + new Date().getTime();
     //image.src = "http://localhost:3002/api/drawing/624774ff88a5bf8e161b84ef/"
@@ -129,12 +119,6 @@ export function Draw() {
 
   }
 
-  function clearCanvas(){
-    const canvas = canvasRef.current;
-    const context = canvas.getContext('2d');
-    context.clearRect(0, 0, canvas.width, canvas.height);
-  }
-
   function saveImage(socket) {
     const canvas = canvasRef.current;
 
@@ -143,27 +127,27 @@ export function Draw() {
       if(url) {
         api.saveImage(state.id, url, (res) => {
           
-          setStatus("success")
-          setWarning("Image Saved!")
+          setStatus("success");
+          setWarning("Image Saved!");
           setDesc("");
           setOpen(true);
          
           socket.emit('load-image-bk',state.id, socket.id);
         }, (err) => {
-          setStatus("warning")
-          setWarning("Could not Save!")
+          setStatus("warning");
+          setWarning("Could not Save!");
           setDesc(err);
           setOpen(true);
     
           //const time = setTimeout(setDisplay("none"), 3000)
-        })
+        });
       } else {
-        setStatus("warning")
-        setWarning("Could not Save!")
+        setStatus("warning");
+        setWarning("Could not Save!");
         setDesc("");
         setOpen(true);
       }
-    })
+    });
   }
 
   const changeColor = (color) => {
@@ -192,7 +176,6 @@ export function Draw() {
  
 
   const setThickness = (thickness) => {
-    setThick(thickness);
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");
     context.lineWidth = thickness;
@@ -254,6 +237,7 @@ export function Draw() {
         <CloseButton position='absolute' right='8px' top='8px' onClick={() => { setOpen(false) }}/>
       </Alert>
 
+      
       <Flex flexDirection={"row"} alignItems="center" width="100%" justifyContent={"center"}>
       <h1>Room Code:</h1>
       </Flex>

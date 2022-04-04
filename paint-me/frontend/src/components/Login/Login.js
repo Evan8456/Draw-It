@@ -1,12 +1,11 @@
-import { Container, Flex, Heading, AspectRatio, Image, Box, Stack, FormControl, InputGroup, InputLeftElement, Input, InputRightElement, Button, FormHelperText, Link, chakra, Spacer, propNames} from "@chakra-ui/react";
+import { Container, Flex, Heading, AspectRatio, Image, Button, Spacer} from "@chakra-ui/react";
 import React, { useEffect } from "react";
 import NavBar from "../Navbar/Navbar";
-import pencil from "../../assets/pencil.png"
-import {FaUserAlt, FaLock} from 'react-icons/fa';
+import pencil from "../../assets/pencil.png";
 import { LoginCard } from "./LoginCard";
 import { connect } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import api from "../../api"
+import api from "../../api";
 
 function Login(props) {
     let navigate = useNavigate();
@@ -14,11 +13,11 @@ function Login(props) {
     useEffect(() => {
         api.authenticate((res) => {
             if(!res.errors) {
-                navigate("/dashboard")
+                navigate("/dashboard");
             }
         }, (err) => {
             
-        })
+        });
     });
 
     return (
@@ -39,6 +38,9 @@ function Login(props) {
                         <Heading color="teal.400">Welcome</Heading>
                         <LoginCard type={props.cardType} dispatch={props.dispatchPage}/>
                     </Flex>
+                </Flex>
+                <Flex alignItems={"center"} justifyContent="center">
+                    <Button>Credits</Button>
                 </Flex>
             </Container> 
         </div>

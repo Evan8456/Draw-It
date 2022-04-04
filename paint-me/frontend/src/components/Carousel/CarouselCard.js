@@ -1,12 +1,9 @@
-import { Flex, Heading, Image, chakra, IconButton } from "@chakra-ui/react";
+import { Flex, Heading, Image } from "@chakra-ui/react";
 import React from "react";
-import { FaTwitter, FaDownload } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 export default function CarouselCard(props) {
 
-    let Twitter = chakra(FaTwitter);
-    let Download = chakra(FaDownload);
     const navigate = useNavigate();
     let display_title = props.title.substring(0,20);
     if(props.title.length >20){

@@ -30,7 +30,7 @@ let sendGQL = function(data, callback) {
     xhr.open("POST", url, true);
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.send(JSON.stringify(data));
-}
+};
 
 module.login = function(username, password, callback, errCallback) {
     let data = {
@@ -38,12 +38,12 @@ module.login = function(username, password, callback, errCallback) {
             signin(username: $username, password: $password)
         }`,
         variables: {username, password}
-    }
+    };
     sendGQL(data, (err, res) => {
-        if(err) errCallback(err, res)
-        callback(res)
-    })
-}
+        if(err) errCallback(err, res);
+        callback(res);
+    });
+};
 
 module.signup = function(username, password, callback, errCallback) {
     let data = {
@@ -51,36 +51,36 @@ module.signup = function(username, password, callback, errCallback) {
             signup(username: $username, password: $password)
         }`,
         variables: {username, password}
-    }
+    };
     sendGQL(data, (err, res) => {
-        if(err) errCallback(err, res)
-        callback(res)
-    })
-}
+        if(err) errCallback(err, res);
+        callback(res);
+    });
+};
 
 module.signout = function(callback, errCallback) {
     let data = {
         query: `query {
             signout
         }`,
-    }
+    };
     sendGQL(data, (err, res) => {
-        if(err) errCallback(err, res)
-        callback(res)
-    })
-}
+        if(err) errCallback(err, res);
+        callback(res);
+    });
+};
 
 module.authenticate = function(callback, errCallback) {
     let data = {
         query: `query {
             authenticate
         }`,
-    }
+    };
     sendGQL(data, (err, res) => {
-        if(err) errCallback(err, res)
-        callback(res)
-    })
-}
+        if(err) errCallback(err, res);
+        callback(res);
+    });
+};
 
 module.getPrivateDrawings = function(callback, errCallback) {
     let data = {
@@ -91,12 +91,12 @@ module.getPrivateDrawings = function(callback, errCallback) {
                 path
             }
         }`,
-    }
+    };
     sendGQL(data, (err, res) => {
-        if(err) errCallback(err, res)
-        callback(res)
-    })
-}
+        if(err) errCallback(err, res);
+        callback(res);
+    });
+};
 
 module.getPublicDrawings = function(callback, errCallback) {
     let data = {
@@ -107,12 +107,12 @@ module.getPublicDrawings = function(callback, errCallback) {
                 path
             }
         }`,
-    }
+    };
     sendGQL(data, (err, res) => {
-        if(err) errCallback(err, res)
-        callback(res)
-    })
-}
+        if(err) errCallback(err, res);
+        callback(res);
+    });
+};
 
 module.saveImage = function(_id, image, callback, callbackerr) {
     let formdata = new FormData();
@@ -122,17 +122,17 @@ module.saveImage = function(_id, image, callback, callbackerr) {
 
 
     send("POST", "/api/drawing", formdata, false, function(err, res) {
-        if(err) return callbackerr(err)
+        if(err) return callbackerr(err);
         callback(res);
-    })
-}
+    });
+};
 
 module.getImage = function(_id, callback, callbackerr) {
     send("GET", "/api/drawing/"+_id, null, false, function(err, res) {
-        if(err) return callbackerr(err)
+        if(err) return callbackerr(err);
         callback(res);
-    })
-}
+    });
+};
 
 module.addDrawing = function(name, publicBool, callback, errCallback) {
     let data = {
@@ -140,12 +140,12 @@ module.addDrawing = function(name, publicBool, callback, errCallback) {
             addDrawing(name: $name, public: $public)
         }`,
         variables: {name, public:publicBool}
-    }
+    };
     sendGQL(data, (err, res) => {
-        if(err) errCallback(err, res)
-        callback(res)
-    })
-}
+        if(err) errCallback(err, res);
+        callback(res);
+    });
+};
 
 module.checkRoom = function(_id, callback, errCallback) {
     let data = {
@@ -153,12 +153,12 @@ module.checkRoom = function(_id, callback, errCallback) {
             findRoom(_id: $_id)
         }`,
         variables: {_id}
-    }
+    };
     sendGQL(data, (err, res) => {
-        if(err) errCallback(err, res)
-        callback(res)
-    })
-}
+        if(err) errCallback(err, res);
+        callback(res);
+    });
+};
 
 module.checkLoad = function(_id, callback, errCallback) {
     let data = {
@@ -166,11 +166,11 @@ module.checkLoad = function(_id, callback, errCallback) {
             loadImage(_id: $_id)
         }`,
         variables: {_id}
-    }
+    };
     sendGQL(data, (err, res) => {
-        if(err) errCallback(err, res)
-        callback(res)
-    })
-}
+        if(err) errCallback(err, res);
+        callback(res);
+    });
+};
 
 export default module;

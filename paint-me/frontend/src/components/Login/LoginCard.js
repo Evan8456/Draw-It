@@ -1,12 +1,11 @@
-import {  Text, Stack, FormControl, InputGroup, InputLeftElement, Input, InputRightElement, Button, FormHelperText, Link, chakra} from "@chakra-ui/react";
+import {  Text, Stack, FormControl, InputGroup, InputLeftElement, Input, InputRightElement, Button, FormHelperText, chakra} from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
-import {FaUserAlt, FaLock, FaEnvelope} from 'react-icons/fa';
-import api from "../../api"
+import {FaUserAlt, FaLock} from 'react-icons/fa';
+import api from "../../api";
 import { useNavigate } from "react-router-dom";
 
 const CFaLock = chakra(FaLock);
 const CFaUserAlt = chakra(FaUserAlt);
-const CFaEmail = chakra(FaEnvelope);
 
 export function LoginCard(props) {
     const [showPassword, setShowPassword] = useState(false);
@@ -20,14 +19,14 @@ export function LoginCard(props) {
 
     useEffect(() => {
         setMessage("");
-    }, [props.type])
+    }, [props.type]);
 
     const handleLogin = () => {
-        if(username == "") {
-            setMessage("Enter valid username!")
+        if(username === "") {
+            setMessage("Enter valid username!");
             return;
         } else if (password.length < 8) {
-            setMessage("Password must be atleast 8 charactaers")
+            setMessage("Password must be atleast 8 charactaers");
             return;
         }
 
@@ -35,23 +34,23 @@ export function LoginCard(props) {
             if(res.errors) {
                 setMessage(res.errors[0].message);
             } else {
-                navigate("/dashboard")
+                navigate("/dashboard");
             }
         }, (err, res) => {
-            setMessage(err)
-        })
-    }
+            setMessage(err);
+        });
+    };
 
     const handleRegister = () => {
         
          if (password.length < 8) {
-            setMessage("Password must be atleast 8 charactaers")
+            setMessage("Password must be atleast 8 charactaers");
             return;
-        } else if (username == "") {
-            setMessage("Enter valid Username!")
+        } else if (username === "") {
+            setMessage("Enter valid Username!");
             return;
-        } else if(password != repPassword) {
-            setMessage("Passwords must match!")
+        } else if(password !== repPassword) {
+            setMessage("Passwords must match!");
             return;
         }
 
@@ -59,16 +58,16 @@ export function LoginCard(props) {
             if(res.errors) {
                 setMessage(res.errors[0].message);
             } else {
-                navigate("/dashboard")
+                navigate("/dashboard");
             }
         }, (err) => {
-            setMessage(err)
-        })
-    }
+            setMessage(err);
+        });
+    };
 
 
     let card;
-    if(props.type == "login") {
+    if(props.type === "login") {
         card = <Stack
         spacing={4}
         p="1rem"
@@ -115,7 +114,7 @@ export function LoginCard(props) {
                 Login
             </Button>
         </Stack>
-    } else if (props.type == "register") {
+    } else if (props.type === "register") {
         card = <Stack
         spacing={4}
         p="1rem"
