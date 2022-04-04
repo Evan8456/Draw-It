@@ -291,7 +291,7 @@ export function SoloDraw() {
           <Box as="button" 
             onClick={() => saveImage()} 
             rounded="2xl" 
-            bg="red.50" 
+            bg="green.50" 
             boxShadow="md" 
             height='35px'
             lineHeight='1.2'

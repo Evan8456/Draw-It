@@ -4,6 +4,7 @@ import {connect} from 'react-redux';
 import { FaPlus } from 'react-icons/fa';
 import api from '../../api';
 import { useNavigate } from "react-router-dom";
+import validator from 'validator';
 import {
     Modal,
     ModalOverlay,
@@ -17,7 +18,13 @@ import {
     Input,
     useDisclosure,
     Select,
-    Radio, RadioGroup
+    Box, 
+    Button, 
+    Container, 
+    Flex, 
+    Heading, 
+    Spacer, 
+    chakra
 } from '@chakra-ui/react'
 
 function NavBar(props) {
@@ -39,6 +46,8 @@ function NavBar(props) {
     }
 
     const createDraw = (title,collab ) => {
+        // santize input before calling api
+        title = validator.escape(title);
         if(title !== "" && collab === "Public"){
           api.addDrawing(title, true, (res) => {
             navigate("/Draw", { state: {  id: res.data.addDrawing, load: false } });
@@ -53,8 +62,8 @@ function NavBar(props) {
 
     const joinRoom = (roomCode) => {
         // api check to see room exists
-
-        if(roomCode !== ""){
+        if(roomCode !== "" && validator.isAlphanumeric(roomCode)){
+        
           api.checkRoom(roomCode, (res) => {
             if(res.data.findRoom) {
               api.checkLoad(roomCode, (res) => {

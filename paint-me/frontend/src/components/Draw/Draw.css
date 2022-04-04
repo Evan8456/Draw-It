@@ -6,5 +6,11 @@ canvas {
 
   .draw{
     display: table;
-    margin: 0 auto;
+     margin: 0 auto; 
     }
+    
+ .tools{
+    margin-left: 0px;
+    margin-right: 38px;
+    
+  }
