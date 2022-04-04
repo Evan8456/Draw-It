@@ -172,8 +172,9 @@ export function SoloDraw() {
             fontSize='15px'
             fontWeight='semibold'
             borderColor='#ccd0d5'
-            className="tools"
+            className="solo-tools"
             width='75px'
+            
             
 
             _hover={{ bg: 'green.100' }}>
@@ -183,7 +184,7 @@ export function SoloDraw() {
        <Box as="button" 
             onClick={() => clearCanvas()} 
             rounded="2xl" 
-            bg="grey.50" 
+            bg="red.50" 
             lineHeight='1.2'
             boxShadow="md" 
             height='35px'
@@ -193,7 +194,7 @@ export function SoloDraw() {
             fontSize='14px'
             fontWeight='semibold'
             borderColor='#ccd0d5'
-            className="tools"
+            className="solo-tools"
             width='75px'
             _hover={{ bg: 'white.100' }}>
                Clear
@@ -265,7 +266,7 @@ export function SoloDraw() {
           <Box as="button" 
             onClick={() => saveImage()} 
             rounded="2xl" 
-            bg="red.50" 
+            bg="green.50" 
             boxShadow="md" 
             height='35px'
             lineHeight='1.2'

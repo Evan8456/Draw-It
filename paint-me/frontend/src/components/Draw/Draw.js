@@ -276,9 +276,11 @@ export function Draw() {
           onChange={() => changeColor(colorRef.current.value)}
           ref={colorRef}
           type="color"
+          className="tools"
         />
         <input
           onChange={(event) => setThickness(event.target.value)}
+          className="tools"
           type="range"
           min="0"
           max="50"
@@ -308,7 +310,7 @@ export function Draw() {
           <Box as="button" 
             onClick={() => saveImage(s)} 
             rounded="2xl" 
-            bg="red.50" 
+            bg="green.50" 
             boxShadow="md" 
             height='35px'
             lineHeight='1.2'

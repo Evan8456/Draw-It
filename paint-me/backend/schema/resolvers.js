@@ -113,7 +113,8 @@ const resolvers = {
                 throw new AuthenticationError()
             }
 
-            const name = data.name;
+            let name = data.name;
+            name = validator.escape(name);
             const username = req.session.username;
             const path = "";
             const public = data.public;
@@ -126,6 +127,10 @@ const resolvers = {
         findRoom: async (_, data, {req, res}) => {
             if(!req.session.username) {
                 throw new AuthenticationError();
+            }
+
+            if(!validator.isAlphanumeric(data._id)){
+                return new UserInputError("Invalid input");
             }
 
             const drawing = await drawings.find({_id: data._id, public:true}).exec()
@@ -141,6 +146,10 @@ const resolvers = {
             if(!req.session.username) {
                 throw new AuthenticationError();
             }
+            if(!validator.isAlphanumeric(data._id)){
+                return new UserInputError("Invalid input");
+            }
+
 
             const drawing = await drawings.find({_id: data._id, public:true}).exec()
 
