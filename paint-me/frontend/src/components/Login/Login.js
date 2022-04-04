@@ -40,7 +40,7 @@ function Login(props) {
                     </Flex>
                 </Flex>
                 <Flex alignItems={"center"} justifyContent="center">
-                    <Button>Credits</Button>
+                    <Button onClick={() => {navigate("/credits")}}>Credits</Button>
                 </Flex>
             </Container> 
         </div>
