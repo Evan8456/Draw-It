@@ -1,4 +1,3 @@
-import { Box, Button, Container, Flex, Heading, Spacer, chakra, Alert, AlertIcon, AlertTitle} from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import {connect} from 'react-redux';
 import { FaPlus } from 'react-icons/fa';
@@ -24,7 +23,11 @@ import {
     Flex, 
     Heading, 
     Spacer, 
-    chakra
+    chakra,
+    Alert,
+    AlertIcon,
+    AlertDescription,
+    AlertTitle
 } from '@chakra-ui/react'
 
 function NavBar(props) {
