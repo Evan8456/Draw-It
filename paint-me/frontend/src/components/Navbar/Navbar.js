@@ -1,5 +1,5 @@
-import { Box, Button, Container, Flex, Heading, Spacer, chakra} from "@chakra-ui/react";
-import React from "react";
+import { Box, Button, Container, Flex, Heading, Spacer, chakra, Alert, AlertIcon, AlertTitle} from "@chakra-ui/react";
+import React, { useEffect, useState } from "react";
 import {connect} from 'react-redux';
 import { FaPlus } from 'react-icons/fa';
 import api from '../../api';
@@ -21,6 +21,8 @@ import {
 } from '@chakra-ui/react'
 
 function NavBar(props) {
+  const [warning, setWarning] = useState(false);
+
     let text = ""
     if(props.type === "login") {
         text = "Get Started"
@@ -58,6 +60,8 @@ function NavBar(props) {
               api.checkLoad(roomCode, (res) => {
                   navigate("/Draw", {state: {id: roomCode, load:res.data.loadImage}})
               })
+            } else {
+              setWarning(true);
             }
           }, err => {
             console.error(err)
@@ -75,9 +79,9 @@ function NavBar(props) {
     }
 
     let CFaPlus = chakra(FaPlus);
-    const { isOpen, onOpen, onClose } = useDisclosure();
+  
     const { isOpen: isCollabOpen , onOpen: onCollabOpen, onClose: onCollabClose }  = useDisclosure();
-    const { isOpen: isJoinRoomOpen , onOpen: onJoinRoomOpen, onClose: onJoinRoomClose }  = useDisclosure()
+    const { isOpen: isJoinRoomOpen , onOpen: onJoinRoomOpen, onClose: onJoinRoomClose }  = useDisclosure({onClose: () => {setWarning(false)}})
 
     const initialRef = React.useRef()
     const finalRef = React.useRef()
@@ -186,6 +190,11 @@ function NavBar(props) {
         >
           <ModalOverlay />
           <ModalContent>
+              <Alert status="error" display={warning ? "flex" : "none"}>
+                <AlertIcon/>
+                <AlertTitle mr={2}>Incorrect room code</AlertTitle>
+              </Alert>
+
             <ModalHeader>Create your Art</ModalHeader>
             <ModalCloseButton />
             <ModalBody pb={6}>

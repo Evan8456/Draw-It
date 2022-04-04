@@ -8,7 +8,7 @@ import api from "../../api"
 import {io} from 'socket.io-client';
 import { FaTwitter, FaDownload } from "react-icons/fa";
 import Navbar from "../Navbar/Navbar";
-import { Box, Alert, AlertIcon, useClipboard, Button, Flex, chakra, IconButton } from "@chakra-ui/react";
+import { Box, Alert, AlertIcon, useClipboard, Button, Flex, chakra, AlertDescription, AlertTitle, CloseButton } from "@chakra-ui/react";
 // import {socket} from "./socket";
 
 export function Draw() {
@@ -27,6 +27,10 @@ export function Draw() {
   const [text, setText] = useState('Successfully Saved');
   const [s, setSocket] = useState(null);
   let Twitter = chakra(FaTwitter);
+  const [status, setStatus] = useState("success");
+  const [warning, setWarning] = useState("Successfully Saved!")
+  const [desc, setDesc] = useState("")
+  const [open, setOpen] = useState(false)
    
 
   let navigate = useNavigate();
@@ -139,19 +143,25 @@ export function Draw() {
       if(url) {
         api.saveImage(state.id, url, (res) => {
           
-          setVariant("success")
-          setDisplay("flex")
-          setText("Successfully Saved")
-          //const time = setTimeout(setDisplay("none"), 3000)
+          setStatus("success")
+          setWarning("Image Saved!")
+          setDesc("");
+          setOpen(true);
          
           socket.emit('load-image-bk',state.id, socket.id);
         }, (err) => {
-          setVariant("failure")
-          setDisplay("flex")
-          setText("Coiuld not save Image")
+          setStatus("warning")
+          setWarning("Could not Save!")
+          setDesc(err);
+          setOpen(true);
     
           //const time = setTimeout(setDisplay("none"), 3000)
         })
+      } else {
+        setStatus("warning")
+        setWarning("Could not Save!")
+        setDesc("");
+        setOpen(true);
       }
     })
   }
@@ -236,6 +246,14 @@ export function Draw() {
     <>
       
       <Navbar page="draw"/>
+
+      <Alert status={status} display={open ? "flex" : "none"}>
+        <AlertIcon/>
+        <AlertTitle mr={2}>{warning}</AlertTitle>
+        <AlertDescription>{desc}</AlertDescription>
+        <CloseButton position='absolute' right='8px' top='8px' onClick={() => { setOpen(false) }}/>
+      </Alert>
+
       <Flex flexDirection={"row"} alignItems="center" width="100%" justifyContent={"center"}>
       <h1>Room Code:</h1>
       </Flex>
