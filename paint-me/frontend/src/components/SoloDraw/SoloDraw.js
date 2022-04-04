@@ -2,14 +2,12 @@ import React, { useState, useRef, useEffect } from "react";
 
 import "./SoloDraw.css";
 import { useNavigate,useLocation } from 'react-router-dom';
-import api from "../../api"
+import api from "../../api";
 import Navbar from "../Navbar/Navbar";
-import { FaPlus } from 'react-icons/fa';
-import { Alert, AlertDescription, AlertIcon, AlertTitle, Box, Button, chakra, CloseButton, Flex, useDisclosure} from "@chakra-ui/react";
+import { Alert, AlertDescription, AlertIcon, AlertTitle, Box, CloseButton, Flex} from "@chakra-ui/react";
 
 
 export function SoloDraw() {
-  let CFaPlus = chakra(FaPlus);
   const canvasRef = useRef();
   const contextRef = useRef();
   const colorRef = useRef();
@@ -17,13 +15,12 @@ export function SoloDraw() {
   const [title, setTitle] = useState(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [img, setImg] = useState(null);
-  const [thickness, setThick] = useState(null);
   const [startX, setStartX] = useState(null);
   const [startY, setStartY] = useState(null);
   const [status, setStatus] = useState("success");
-  const [warning, setWarning] = useState("Successfully Saved!")
-  const [desc, setDesc] = useState("")
-  const [open, setOpen] = useState(false)
+  const [warning, setWarning] = useState("Successfully Saved!");
+  const [desc, setDesc] = useState("");
+  const [open, setOpen] = useState(false);
   
   let navigate = useNavigate();
   const { state } = useLocation();
@@ -34,11 +31,11 @@ export function SoloDraw() {
 
     api.authenticate((res) => {
         if(res.errors) {
-          navigate("/")
+          navigate("/");
         }
       }, (err) => {
-          navigate("/")
-      })
+          navigate("/");
+      });
     setTitle(state.title);
     const canvas = canvasRef.current;
     canvas.width = 600 * 2;
@@ -54,10 +51,10 @@ export function SoloDraw() {
     contextRef.current = context;
 
     if(load !== "" && load!== undefined && load === true) {
-      var image =new Image()
+      var image =new Image();
       image.onload = () => {
-        canvasRef.current.getContext("2d").drawImage(image,0,0,image.width,image.height,0,0,600,600);;
-      }
+        canvasRef.current.getContext("2d").drawImage(image,0,0,image.width,image.height,0,0,600,600);
+      };
       if(process.env.REACT_APP_ENVIRONMENT) image.crossOrigin = "use-credentials";
       image.src =  process.env.REACT_APP_BACKEND + "/api/drawing/" + id;
     }
@@ -82,7 +79,6 @@ export function SoloDraw() {
 
   const setThickness = (thickness) => {
 
-    setThick(thickness);
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");
     context.lineWidth = thickness;
@@ -109,23 +105,23 @@ export function SoloDraw() {
     canvas.toBlob((url) => {
       if(url) {
         api.saveImage(id, url, (res) => {
-          setStatus("success")
-          setWarning("Image Saved!")
+          setStatus("success");
+          setWarning("Image Saved!");
           setDesc("");
           setOpen(true);
         }, (err) => {
-          setStatus("warning")
-          setWarning("Could not Save!")
+          setStatus("warning");
+          setWarning("Could not Save!");
           setDesc(err);
           setOpen(true);
-        })
+        });
       } else {
-        setStatus("warning")
-        setWarning("Could not Save!")
+        setStatus("warning");
+        setWarning("Could not Save!");
         setDesc("");
         setOpen(true);
       }
-    })
+    });
   }
 
   function addImg(){
@@ -133,7 +129,6 @@ export function SoloDraw() {
       return;
     }
     const canvas = canvasRef.current;
-    const context = canvas.getContext("2d");
     let img = new Image();
     img.src = URL.createObjectURL(importImg.current.files[0]);
     setImg(img);

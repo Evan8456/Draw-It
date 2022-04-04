@@ -1,16 +1,16 @@
-canvas {
-    border: 1px solid #000000;
-    width: 600px;
-    height: 600px;
-  }
+.draw{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
 
-  .draw{
-    display: table;
-     margin: 0 auto; 
-    }
-    
- .tools{
-    margin-left: 0px;
-    margin-right: 38px;
-    
-  }
+canvas {
+  border: 1px solid #000000;
+  width: 600px;
+  height: 600px;
+}
+
+.tools{
+  margin-left: 35px;   
+}

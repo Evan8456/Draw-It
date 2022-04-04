@@ -1,21 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { Route, BrowserRouter, Navigate, Routes} from 'react-router-dom';
+import React, { useEffect } from "react";
+import { Route, BrowserRouter, Routes} from 'react-router-dom';
 import "./App.css";
 import Dashboard from "./components/Dashboard/Dashboard";
 import { Draw } from "./components/Draw/Draw";
 import { SoloDraw } from "./components/SoloDraw/SoloDraw";
 import  Login  from "./components/Login/Login";
-
-const ProtectedRoute = ({ auth, children }) => {
-  if (!auth) {
-    return <Navigate to="/" replace />;
-  }
-
-  return children;
-};
+import Credits from "./components/Credits/Credits";
 
 function App() {
-  const [auth, setAuth] = useState(true);
 
   useEffect(() => {
   });
@@ -24,20 +16,15 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Login/>}/>
+        <Route path="/credits" element={<Credits/>}/>
         <Route path="/draw" element={
-          <ProtectedRoute auth={auth}>
             <Draw/>
-          </ProtectedRoute>
         }/>
         <Route path="/SoloDraw" element={
-          <ProtectedRoute auth={auth}>
             <SoloDraw/>
-          </ProtectedRoute>
         }/>
         <Route path="/dashboard" element={
-          <ProtectedRoute auth={auth}>
             <Dashboard/>
-          </ProtectedRoute>
         }/>
       </Routes>
     </BrowserRouter>

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../Navbar/Navbar";
-import { Container, Heading, Flex, Box, Text } from "@chakra-ui/react";
-import Fonts from "../../themes/fonts";
+import { Container, Heading, Flex, Box } from "@chakra-ui/react";
 import './Dashboard.css'
 import Carousel from "../Carousel/Carousel";
 import { connect } from "react-redux";
@@ -17,23 +16,23 @@ function Dashboard(props) {
 
         api.authenticate((res) => {
             if(res.errors) {
-                navigate("/")
+                navigate("/");
             }
         }, (err) => {
-            navigate("/")
-        })
+            navigate("/");
+        });
 
         api.getPrivateDrawings((res) => {
-            setPrivateDrawings(res.data.privateDrawings)
+            setPrivateDrawings(res.data.privateDrawings);
         }, (err) => {
-            navigate("/")
-        })
+            navigate("/");
+        });
 
         api.getPublicDrawings((res) => {
-            setPublicDrawings(res.data.publicDrawings)
+            setPublicDrawings(res.data.publicDrawings);
         }, (err) => {
-            navigate("/")
-        })
+            navigate("/");
+        });
     }, []);
 
     return (
