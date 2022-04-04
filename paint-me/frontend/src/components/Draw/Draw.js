@@ -8,7 +8,6 @@ import api from "../../api";
 import {io} from 'socket.io-client';
 import Navbar from "../Navbar/Navbar";
 import { Box, Alert, AlertIcon, useClipboard, Button, Flex, AlertDescription, AlertTitle, CloseButton } from "@chakra-ui/react";
-// import {socket} from "./socket";
 
 export function Draw() {
   const canvasRef = useRef();
