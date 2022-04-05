@@ -10,13 +10,9 @@ https://youtu.be/-i_fE-4Fd80
 
 ## Project Description
 
-**Task:** Provide a detailed description of your app
-
 Like to draw? Need a way to share your artistic skills with others? Introducing a new webapp called Draw-It. Draw-It allows users to draw art in house and share them with other users. Users may create Draw-It accounts, create beautiful drawings and save it to their gallery. You will also be able collaborate with other artists to create a new work of arts together
 
 ## Development
-
-**Task:** Leaving deployment aside, explain how the app is built. Please describe the overall code design and be specific about the programming languages, framework, libraries and third-party api that you have used. 
 
 **Frontend:**
 
@@ -32,8 +28,6 @@ Each of the collections in the mongoDB database has a model in the 'models' fold
 
 ## Deployment
 
-**Task:** Explain how you have deployed your application. 
-
 We deployed the application on digital ocean using a ubuntu droplet. In order to access the server you had to ssh into the server using public/private keys which 
 was added to the user authorized_keys file. We used namecheap to register the domain in order to enable https and digital ocean networking to connect them together.
 The application itself is running using systemd which we chose over pm2 because of the easier access to debugging logs and restarting services
@@ -44,8 +38,6 @@ that was used in order for github actions to ssh in the server and pull the code
 to separate dev and server variables, the .env gets created in every deployment from the secrets as well.
 
 ## Maintenance
-
-**Task:** Explain how you monitor your deployed app to make sure that everything is working as expected.
 
 If it is a deployment issue we can monitor the error using github actions by going into the failed pipeline and seeing where the error is. 
 This will show if there was a problem when pulling the code from github or installing independancies.
@@ -61,8 +53,6 @@ We also use digital ocean droplets monitoring to see if its related to resource 
 
 ## Challenges
 
-**Task:** What is the top 3 most challenging things that you have learned/developed for you app? Please restrict your answer to only three items. 
-
 1. One of the most challenging parts of our project was learning how to design a functional front end using react. Since most of our team was new
    react, it was hard for us to get used to it. However, in time and with practice, we were able to get the hang of it.
 2. The second most challenging part of our project was learning how to design a backend that serves Graphql. Prior the the project, all of our team 
@@ -72,8 +62,6 @@ We also use digital ocean droplets monitoring to see if its related to resource 
    would be when we had to migrate to https and having to fixed out backend code to support this change on the production side.
 
 ## Contributions
-
-**Task:** Describe the contribution of each team member to the project. Please provide the full name of each team member (but no student number). 
 
 1. Evan Ng
    Evan was involved with working on both frontend, backend, and debugging the server. For frontend, Evan mainly worked on the drawing related components on
