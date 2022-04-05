@@ -87,4 +87,6 @@ We also use digital ocean droplets monitoring to see if its related to resource 
 
 
 # One more thing? 
-This course put us through our paces. At times things seemed overwheleming. This was especially true when one of our teammate contracted covid-19, causing us to slow our development time. After lots of hard work and dedication, we were able to complete the webapp on time.
+This course put us through our paces. At times things seemed overwheleming. This was especially true when one of our teammate contracted covid-19, causing us to slow our development time. After lots of hard work and dedication, we were able to complete the webapp on time. 
+
+Also, our project name is called Draw-it, however, our folder is called PaintME. The reasoning for this is because at the of deployment, paintME as a domain was already taken. Since a lot of our server dependencies refer to the folder paintME, we decided to keep it and get the the domain draw-it instead.
