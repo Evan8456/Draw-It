@@ -85,5 +85,4 @@ We also use digital ocean droplets monitoring to see if its related to resource 
 
 
 # One more thing? 
-
-**Task:** Any additional comment you want to share with the course staff? 
+This course put us through our paces. At times things seemed overwheleming. This was especially true when one of our teammate contracted covid-19, causing us to slow our development time. After lots of hard work and dedication, we were able to complete the webapp on time.
