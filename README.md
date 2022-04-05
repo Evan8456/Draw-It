@@ -43,7 +43,9 @@ If it is a deployment issue we can monitor the error using github actions by goi
 This will show if there was a problem when pulling the code from github or installing independancies.
 
 ssh into the server and check server logs using the systemd commands respectively for backend/frontend:
+
 journalctl -u paintme -f -o cat
+
 journalctl -u paintmebackend -f -o cat
 
 if there are any errors you could check the project directory to view whether its an environmental variable problem or coding problem or project version problem
