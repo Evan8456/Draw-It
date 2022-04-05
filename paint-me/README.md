@@ -6,11 +6,13 @@ https://draw-it.me/
 
 ## Project Video URL 
 
-**Task:** Provide the link to your youtube video. Please make sure the link works. 
+https://youtu.be/-i_fE-4Fd80
 
 ## Project Description
 
 **Task:** Provide a detailed description of your app
+
+Like to draw? Need a way to share your artistic skills with others? Introducing a new webapp called Draw-It. Draw-It allows users to draw art in house and share them with other users. Users may create Draw-It accounts, create beautiful drawings and save it to their gallery. You will also be able collaborate with other artists to create a new work of arts together
 
 ## Development
 
