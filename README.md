@@ -1,10 +1,10 @@
 # Draw-it
 
-## Project URL
+## URL
 
 https://draw-it.me/
 
-## Project Video URL 
+## Demo
 
 https://youtu.be/-i_fE-4Fd80
 
@@ -63,30 +63,22 @@ We also use digital ocean droplets monitoring to see if its related to resource 
 3. Finally, the third most challenging part of the project was deploying our web app and subsequently fixing any bugs found on the deployed webapp. An exmaple of this
    would be when we had to migrate to https and having to fixed out backend code to support this change on the production side.
 
-## Contributions
+## Contributors
 
-1. Evan Ng:
+   Evan Ng:
    Evan was involved with working on both frontend, backend, and debugging the server. For frontend, Evan mainly worked on the drawing related components on
-   the front and and created the tools for drawing as well method of which users create and join drawing rooms. In addition, Evan was involved in the both the
+   the frontend and created the tools for drawing as well the features used for creating and joining drawing rooms. In addition, Evan was involved in the both the
    socket implementation for synchronous drawing for both backend and frontend. Finally, Evan was the one who worked on authentication and input sanitization
-   for all graphql and rest requests. When bugs occurred on the deployed app, Evan also took time debugging and fixing any bugs that occurred. 
+   for all graphql and rest requests. When bugs occurred on the deployed app, Evan also took time debugging and fixing any bugs that occurred in production. 
 
-2. Eric Tan:
+   [Eric Tan](https://github.com/EricTan1):
    Eric worked on everything related to deployment and continuous deployment. Which includes setting up the server with digitalocean, getting domain name from
    namecheap, setting up https and reverse proxy and finally setting up continuous deployment with github actions. He also worked on the socket synchronous drawing
    code and as well as the feature of the image being saved whenever a new person joins the room so they are able to retrieve the latest image. Eric also worked on
    modifying the backend to support https and separating server and development variables in order for the team to develop to deploy early and fast.
 
-3. Parth Solanki:
+   [Parth Solanki](https://github.com/ParthSolanki1):
    Parth was involved with working on both the frontend and backend services. He worked on the majority of the stylistic components of the app, 
    including the landing page, dashboard, and credits page. He also worked on the api.js which acted as the layer communicating with the backend, this, 
    connecting both the frontend and backend. Parth was also involved in authentication for graphql by creating all the resolvers, and also created the api endpoints 
    needed to save and retrieve images from the server. He was also involved in ensuring the app was secure, by using the many security tips learned in lectures. 
-
-
-
-
-# One more thing? 
-This course put us through our paces. At times things seemed overwheleming. This was especially true when one of our teammate contracted covid-19, causing us to slow our development time. After lots of hard work and dedication, we were able to complete the webapp on time. 
-
-Also, our project name is called Draw-it, however, our folder is called PaintME. The reasoning for this is because at the of deployment, paintME as a domain was already taken. Since a lot of our server dependencies refer to the folder paintME, we decided to keep it and get the the domain draw-it instead.
