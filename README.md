@@ -65,7 +65,7 @@ We also use digital ocean droplets monitoring to see if its related to resource 
 
 ## Contributors
 
-   Evan Ng:
+   [Evan Ng](https://github.com/Evan8456):
    Evan was involved with working on both frontend, backend, and debugging the server. For frontend, Evan mainly worked on the drawing related components on
    the frontend and created the tools for drawing as well the features used for creating and joining drawing rooms. In addition, Evan was involved in the both the
    socket implementation for synchronous drawing for both backend and frontend. Finally, Evan was the one who worked on authentication and input sanitization
