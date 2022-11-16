@@ -56,7 +56,7 @@ export function SoloDraw() {
         canvasRef.current.getContext("2d").drawImage(image,0,0,image.width,image.height,0,0,600,600);
       };
       if(process.env.REACT_APP_ENVIRONMENT) image.crossOrigin = "use-credentials";
-      image.src =  process.env.REACT_APP_BACKEND + "/api/drawing/" + id;
+      image.src =  process.env.REACT_APP_BACKEND + "/api/drawing/" + id + "?" + new Date().getTime();
     }
 
   }, []);
