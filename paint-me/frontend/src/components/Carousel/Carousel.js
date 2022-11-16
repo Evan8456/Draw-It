@@ -38,7 +38,7 @@ export default function Carousel(props) {
                 if(path === "") {
                     path = drawing
                 } else {
-                    path = process.env.REACT_APP_BACKEND + "/api/drawing/" + props.items[i]._id
+                    path = process.env.REACT_APP_BACKEND + "/api/drawing/" + props.items[i]._id + "?" + new Date().getTime();
                 }
 
                 card.push(<CarouselCard title={props.items[i].name} image={path} _id={props.items[i]._id} key={props.items[i]._id} width={w} path={props.items[i].path} drawpath={props.drawpath}/>)
