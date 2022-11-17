@@ -52,17 +52,6 @@ if there are any errors you could check the project directory to view whether it
 
 We also use digital ocean droplets monitoring to see if its related to resource bottlenecking or something on digital ocean's side. For example if digital ocean servers are down.
 
-
-## Challenges
-
-1. One of the most challenging parts of our project was learning how to design a functional front end using react. Since most of our team was new
-   react, it was hard for us to get used to it. However, in time and with practice, we were able to get the hang of it.
-2. The second most challenging part of our project was learning how to design a backend that serves Graphql. Prior the the project, all of our team 
-   only had experience using REST. For things such as authentication, learning how to perform these actions using graphql was very dificult, however, with practice.
-   we were able to figure it out.
-3. Finally, the third most challenging part of the project was deploying our web app and subsequently fixing any bugs found on the deployed webapp. An example of this
-   would be when we had to migrate to https and having to fixed out backend code to support this change on the production side.
-
 ## Contributors
 
    [Evan Ng](https://github.com/Evan8456):
