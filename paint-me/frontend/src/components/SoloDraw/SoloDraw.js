@@ -257,10 +257,12 @@ export function SoloDraw() {
 
         <canvas
           className="test"
-          onMouseDown={onMouseDown}
-        
+          onMouseDown={onMouseDown}        
           onMouseUp={onMouseUp}
           onMouseMove={draw}
+          onTouchStart={onTouchDown}
+          onTouchEnd={onTouchUp}
+          onTouchMove={touchdraw}
           ref={canvasRef}
         />
         
