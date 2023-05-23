@@ -190,7 +190,25 @@ export function Draw() {
 
   };
 
+  const onTouchDown = (e ) => {
+    const { clientX, clientY } = e.nativeEvent.touches[0];
+    setStartX(clientX);
+    setStartY(clientY);
+  
+    setIsDrawing(true);
+
+
+  };
+
+
+
+
   const onMouseUp = () => {
+    contextRef.current.closePath();
+    setIsDrawing(false);
+  };
+
+  const onTouchUp = () => {
     contextRef.current.closePath();
     setIsDrawing(false);
   };
@@ -217,6 +235,37 @@ export function Draw() {
       y0: startY,
       x1: offsetX,
       y1: offsetY,
+      color: context.strokeStyle,
+      thickness: context.lineWidth
+
+    }, state.id);
+    
+  };
+
+
+  
+  const touchdraw = (e) => {
+    if (!isDrawing) {
+      return;
+    }
+   
+    contextRef.current.beginPath();
+    contextRef.current.moveTo(startX, startY);
+    const { clientX, clientY } = e.nativeEvent.touches[0];
+    setStartX(clientX);
+    setStartY(clientY);
+    
+    contextRef.current.lineTo(clientX, clientY);
+    contextRef.current.stroke();
+
+    const canvas = canvasRef.current;
+    const context = canvas.getContext("2d");
+
+    s.emit('drawing', {
+      x0: startX,
+      y0: startY,
+      x1: clientX,
+      y1: clientY,
       color: context.strokeStyle,
       thickness: context.lineWidth
 
@@ -251,6 +300,9 @@ export function Draw() {
           onMouseDown={onMouseDown}
           onMouseUp={onMouseUp}
           onMouseMove={draw}
+          onTouchStart={onTouchDown}
+          onTouchEnd={onTouchUp}
+          onTouchMove={touchdraw}
           ref={canvasRef}
         />
       

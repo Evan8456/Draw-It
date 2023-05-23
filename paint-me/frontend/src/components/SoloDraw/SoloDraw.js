@@ -85,9 +85,22 @@ export function SoloDraw() {
   };
 
   const onMouseDown = (e ) => {
+
     const { offsetX, offsetY } = e.nativeEvent;
+  
     setStartX(offsetX);
     setStartY(offsetY);
+  
+    setIsDrawing(true);
+
+  };
+
+   const onTouchDown = (e ) => {
+
+    const { clientX, clientY } = e.nativeEvent.touches[0];
+
+    setStartX(clientX);
+    setStartY(clientY);
   
     setIsDrawing(true);
 
@@ -148,20 +161,42 @@ export function SoloDraw() {
     setIsDrawing(false);
   };
 
+    const onTouchUp = () => {
+    contextRef.current.closePath();
+    setIsDrawing(false);
+  };
+
   const draw = (e ) => {
     if (!isDrawing) {
       return;
     }
     contextRef.current.beginPath();
     contextRef.current.moveTo(startX, startY);
+    console.log(e.nativeEvent.type)
+
     const { offsetX, offsetY } = e.nativeEvent;
+
     setStartX(offsetX);
     setStartY(offsetY);
     contextRef.current.lineTo(offsetX, offsetY);
     contextRef.current.stroke();
     
   };
+  const touchdraw = (e ) => {
+    if (!isDrawing) {
+      return;
+    }
+    contextRef.current.beginPath();
+    contextRef.current.moveTo(startX, startY);
 
+    const { clientX, clientY } = e.nativeEvent.touches[0];
+
+    setStartX(clientX);
+    setStartY(clientY);
+    contextRef.current.lineTo(clientX, clientY);
+    contextRef.current.stroke();
+    
+  };
   return (
     <>
    
@@ -223,6 +258,7 @@ export function SoloDraw() {
         <canvas
           className="test"
           onMouseDown={onMouseDown}
+        
           onMouseUp={onMouseUp}
           onMouseMove={draw}
           ref={canvasRef}
